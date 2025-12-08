@@ -1,0 +1,268 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>BD Income Tax App — Pro (A1 / D2)</title>
+<meta name="theme-color" content="#0a1224" />
+<style>
+  :root{--bg:#06102a;--panel:#0b1220;--muted:#9ca3af;--accent:#0b74de;--accent-2:#2563eb;--danger:#ff8b8b}
+  html,body{height:100%;margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,'Noto Sans',Arial;background:linear-gradient(180deg,#06102a 0%, #071022 100%);color:#e6eef8;-webkit-font-smoothing:antialiased}
+  .app{max-width:1200px;margin:20px auto;padding:18px}
+  header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px}
+  .brand{display:flex;align-items:center;gap:12px}
+  .logo{width:52px;height:52px;border-radius:12px;background:linear-gradient(135deg,var(--accent),var(--accent-2));display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;box-shadow:0 8px 24px rgba(11,116,222,0.18)}
+  h1{font-size:18px;margin:0}
+  .subtitle{font-size:13px;color:rgba(230,238,248,0.7)}
+  .controls{display:flex;gap:8px;align-items:center}
+  .btn{background:linear-gradient(180deg,var(--accent),var(--accent-2));color:#fff;padding:8px 12px;border-radius:10px;border:0;cursor:pointer;font-weight:600}
+  .btn.ghost{background:transparent;color:var(--accent);border:1px solid rgba(255,255,255,0.06)}
+  .layout{display:grid;grid-template-columns:360px 1fr;gap:16px}
+  @media(max-width:980px){.layout{grid-template-columns:1fr}}
+  .panel{background:rgba(255,255,255,0.03);padding:12px;border-radius:12px;border:1px solid rgba(255,255,255,0.04)}
+  label{display:block;margin-top:10px;font-weight:600;font-size:13px;color:rgba(230,238,248,0.9)}
+  input[type=number],select,input[type=text]{width:100%;padding:10px;border-radius:10px;border:1px solid rgba(255,255,255,0.04);margin-top:6px;background:transparent;color:inherit}
+  .small{font-size:13px;color:rgba(230,238,248,0.7)}
+  .row{display:flex;gap:10px;align-items:center}
+  .section{margin-bottom:12px}
+  .section-header{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;border-radius:10px;cursor:pointer;border:1px solid rgba(255,255,255,0.04);background:linear-gradient(180deg, rgba(255,255,255,0.02), transparent)}
+  .section-body{display:none;padding:12px}
+  .arrow{transition:transform .28s;color:rgba(230,238,248,0.7)}
+  .arrow.open{transform:rotate(90deg)}
+  .summary-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  @media(max-width:980px){.summary-grid{grid-template-columns:1fr}}
+  .summary-tile{padding:12px;border-radius:10px;border:1px solid rgba(255,255,255,0.04);background:linear-gradient(180deg, rgba(255,255,255,0.02), transparent)}
+  .table-wrap{overflow:auto;border-radius:10px;border:1px solid rgba(255,255,255,0.04);margin-top:8px}
+  table{width:100%;border-collapse:collapse;min-width:720px}
+  th,td{padding:10px;border-bottom:1px dashed rgba(255,255,255,0.03);text-align:left}
+  thead th{position:sticky;top:0;background:transparent}
+  tfoot td{font-weight:700;border-top:2px solid rgba(255,255,255,0.04)}
+  #chartSVG{width:100%;height:300px;border-radius:8px;margin-top:8px}
+  .legend{display:flex;gap:10px;align-items:center;margin-top:8px}
+  .legend .item{display:flex;gap:6px;align-items:center;font-size:13px}
+  .swatch{width:12px;height:12px;border-radius:3px;display:inline-block}
+  footer{margin-top:16px;text-align:right;color:rgba(230,238,248,0.6);font-size:13px}
+  .muted-plain{color:rgba(230,238,248,0.65)}
+</style>
+</head>
+<body data-theme="dark">
+  <div class="app">
+    <header>
+      <div class="brand">
+        <div class="logo">BD</div>
+        <div>
+          <h1>BD Income Tax App — Jul → Jun</h1>
+          <div class="subtitle">Full calculator — investment plan, monthly sheet, chart, PWA prep</div>
+        </div>
+      </div>
+      <div class="controls">
+        <button id="darkToggle" class="btn ghost">Toggle Theme</button>
+        <button id="printBtn" class="btn ghost">Export PDF</button>
+        <button id="exportCsv" class="btn">Export CSV</button>
+      </div>
+    </header>
+
+    <main class="layout">
+      <div>
+        <div class="panel section">
+          <div class="section-header" data-target="salarySection"><div><strong>1. Salary & Bonus</strong></div><div class="arrow">▶</div></div>
+          <div class="section-body" id="salarySection">
+            <label>Monthly gross (Jul→Jan) — 7 months</label>
+            <input id="gross_juljan" type="number" value="100000">
+            <label>Monthly gross (Feb→Jun) — 5 months</label>
+            <input id="gross_febjun" type="number" value="106000">
+            <label>13th month salary (Dec)</label>
+            <input id="salary_13th" type="number" value="100000">
+            <label>Performance bonus (Feb)</label>
+            <input id="bonus_feb" type="number" value="0">
+          </div>
+        </div>
+
+        <div class="panel section">
+          <div class="section-header" data-target="pfSection"><div><strong>2. PF Contributions</strong></div><div class="arrow">▶</div></div>
+          <div class="section-body" id="pfSection">
+            <label>Employer PF rate (%)</label>
+            <input id="employer_pf_pct" type="number" value="5">
+            <label>Employee PF rate (%)</label>
+            <input id="employee_pf_pct" type="number" value="5">
+          </div>
+        </div>
+
+        <div class="panel section">
+          <div class="section-header" data-target="investSection"><div><strong>3. Investment (DPS / Share / Other)</strong></div><div class="arrow">▶</div></div>
+          <div class="section-body" id="investSection">
+            <label>Required qualifying investment (auto)</label>
+            <input id="required_qual" type="number" value="0" disabled>
+            <label>Planned personal investment (declared)</label>
+            <input id="planned_investment" type="number" value="185533">
+            <label>DPS (yearly)</label>
+            <input id="inv_dps" type="number" value="0">
+            <label>Share / Mutual Fund (yearly)</label>
+            <input id="inv_share" type="number" value="0">
+            <label>Other eligible investments (yearly)</label>
+            <input id="inv_other" type="number" value="0">
+            <div class="small">Investment rules: rebate = min(0.03*taxableIncome, 0.15*eligibleInvest, 1,000,000)</div>
+          </div>
+        </div>
+
+        <div class="panel section">
+          <div class="section-header" data-target="settingsSection"><div><strong>⚙️ Settings (Tax slabs & rates)</strong></div><div class="arrow">▶</div></div>
+          <div class="section-body" id="settingsSection">
+            <label>Zero-tax limit</label>
+            <input id="slab0" type="number" value="375000">
+            <label>Slab1 limit</label>
+            <input id="slab1" type="number" value="300000">
+            <label>Slab2 limit</label>
+            <input id="slab2" type="number" value="400000">
+            <label>Slab3 limit</label>
+            <input id="slab3" type="number" value="500000">
+            <label>Slab4 limit</label>
+            <input id="slab4" type="number" value="2000000">
+            <label>Rates (comma separated) — example: 0%,10%,15%,20%,25%,30%</label>
+            <input id="ratesText" type="text" value="0%,10%,15%,20%,25%,30%">
+            <div class="row" style="margin-top:8px"><button id="saveSettings" class="btn">Save settings</button><button id="resetSettings" class="btn ghost">Reset defaults</button></div>
+          </div>
+        </div>
+
+        <div class="panel section">
+          <div class="section-header" data-target="historySection"><div><strong>History (Last 20)</strong></div><div class="arrow">▶</div></div>
+          <div class="section-body" id="historySection">
+            <div id="historyList" class="small muted-plain">(no history yet)</div>
+            <div style="margin-top:8px" class="row"><button id="clearHistory" class="btn ghost">Clear History</button><button id="saveInputs" class="btn ghost">Save Inputs</button></div>
+          </div>
+        </div>
+
+        <div style="margin-top:12px" class="row"><button id="calc" class="btn">Calculate</button><button id="exportCsvAlt" class="btn ghost">Export Month CSV</button></div>
+      </div>
+
+      <div>
+        <div class="panel summary-grid">
+          <div class="summary-tile" id="topupBox">(click Calculate)</div>
+          <div class="summary-tile" id="summary">(click Calculate)</div>
+        </div>
+
+        <div class="panel" style="margin-top:12px">
+          <h3 style="margin:0">Monthly Tax Sheet — Jul → Jun</h3>
+          <div class="table-wrap"><table id="monthTable"><thead><tr><th>Month</th><th>Gross</th><th>Employee PF</th><th>Employer PF</th><th>Tax</th><th>Net to Bank</th></tr></thead><tbody></tbody><tfoot id="monthTotals"><tr><td>Total</td><td>Tk 0</td><td>Tk 0</td><td>Tk 0</td><td>Tk 0</td><td>Tk 0</td></tr></tfoot></table></div>
+
+          <svg id="chartSVG" viewBox="0 0 1000 300" preserveAspectRatio="xMidYMid meet"></svg>
+          <div class="legend">
+            <div class="item"><span class="swatch" style="background:#0b74de"></span>Gross</div>
+            <div class="item"><span class="swatch" style="background:#2563eb"></span>Employee PF</div>
+            <div class="item"><span class="swatch" style="background:#60a5fa"></span>Employer PF</div>
+            <div class="item"><span class="swatch" style="background:#10b981"></span>Net to Bank</div>
+          </div>
+        </div>
+
+        <div class="panel" style="margin-top:12px">
+          <h3 style="margin:0">Tax breakdown (slab by slab)</h3>
+          <div id="breakdownBox" class="small">(click Calculate)</div>
+        </div>
+
+      </div>
+    </main>
+
+    <footer>Calculator by Musfikur Rahman • © 2025 • Prepared for PWA & APK packaging</footer>
+  </div>
+
+<script>
+// Helpers
+function $(id){return document.getElementById(id)}
+function toNum(v){return Number(v||0)}
+function fmt(x){return (Math.round(x)||0).toLocaleString('en-BD')}
+
+// Theme
+(function(){ const saved = localStorage.getItem('bd_theme') || 'dark'; document.body.setAttribute('data-theme', saved); })();
+$('darkToggle').addEventListener('click', ()=>{ const cur=document.body.getAttribute('data-theme'); const next=cur==='dark'?'light':'dark'; document.body.setAttribute('data-theme', next); localStorage.setItem('bd_theme', next); });
+
+// Collapsible sections (accordion)
+(function(){ const headers = document.querySelectorAll('.section-header'); headers.forEach(h=>{ h.addEventListener('click', ()=>{ const id=h.dataset.target || h.nextElementSibling.id; const body = document.getElementById(id); const isOpen = body.style.display==='block'; document.querySelectorAll('.section-body').forEach(b=>b.style.display='none'); document.querySelectorAll('.arrow').forEach(a=>a.classList.remove('open')); if(!isOpen){ body.style.display='block'; h.querySelector('.arrow').classList.add('open'); } }); }); })();
+
+// Settings persistence
+function loadSettings(){ const s=JSON.parse(localStorage.getItem('bd_settings')||'{}'); if(s.slab0) $('slab0').value=s.slab0; if(s.slab1) $('slab1').value=s.slab1; if(s.slab2) $('slab2').value=s.slab2; if(s.slab3) $('slab3').value=s.slab3; if(s.slab4) $('slab4').value=s.slab4; if(s.ratesText) $('ratesText').value=s.ratesText; }
+function saveSettings(){ const s={slab0:$('slab0').value,slab1:$('slab1').value,slab2:$('slab2').value,slab3:$('slab3').value,slab4:$('slab4').value,ratesText:$('ratesText').value}; localStorage.setItem('bd_settings', JSON.stringify(s)); toast('Settings saved'); }
+$('saveSettings') && $('saveSettings').addEventListener('click', saveSettings);
+$('resetSettings') && $('resetSettings').addEventListener('click', ()=>{ localStorage.removeItem('bd_settings'); location.reload(); }); loadSettings();
+
+// Toast
+function toast(msg, time=1200){ const el=document.createElement('div'); el.textContent=msg; el.style.position='fixed'; el.style.right='18px'; el.style.bottom='18px'; el.style.padding='10px 14px'; el.style.borderRadius='10px'; el.style.background='rgba(255,255,255,0.04)'; el.style.border='1px solid rgba(255,255,255,0.06)'; document.body.appendChild(el); setTimeout(()=>{ el.style.opacity=0; setTimeout(()=>el.remove(),300); },time); }
+
+// Parse rates helper
+function parseRates(text){ return text.split(',').map(s=>{ s=s.trim(); if(s.endsWith('%')) return parseFloat(s.replace('%',''))/100; const v=parseFloat(s); if(!isNaN(v) && v>1) return v/100; return isNaN(v)?0:v; }); }
+
+function loadSlabsAndRates(){ const limits=[toNum($('slab0').value),toNum($('slab1').value),toNum($('slab2').value),toNum($('slab3').value),toNum($('slab4').value)]; const rates = parseRates($('ratesText').value); const slabs=[]; for(let i=0;i<limits.length;i++){ slabs.push({limit:limits[i],rate:rates[i]||0}); } slabs.push({limit:Infinity, rate:rates[limits.length]||0.30}); return slabs; }
+
+function computeTaxOnAmount(taxable, slabs){ // returns {tax,breakdown[]}
+  let remaining=taxable, tax=0; const breakdown=[]; for(let i=0;i<slabs.length;i++){ const b=slabs[i]; if(remaining<=0) break; const amt=Math.min(remaining,b.limit); const t = amt * (b.rate||0); breakdown.push({limit:b.limit,rate:b.rate,amount:amt,tax:t}); tax += t; remaining -= amt; } return {tax, breakdown}; }
+
+function prorateMonths(){ return {months_juljan:7, months_febjun:5}; }
+function distributeMonthly(total, months){ const base = Math.floor(total/months); const arr = Array(months).fill(base); let rem = Math.round(total - base*months); for(let i=0;i<months && rem>0;i++){ arr[i]++; rem--; } return arr; }
+
+// Generate monthly rows & chart
+function generateMonthlyRows(monthsArr){ const tbody=$('monthTable').querySelector('tbody'); tbody.innerHTML=''; const names=['Jul','Aug','Sep','Oct','Nov','Dec','Jan','Feb','Mar','Apr','May','Jun']; let sumGross=0,sumEmp=0,sumEmpr=0,sumTax=0,sumNet=0; for(let i=0;i<12;i++){ const r=monthsArr[i]||{gross:0,empPF:0,emplrPF:0,tax:0,net:0}; const tr=document.createElement('tr'); tr.innerHTML=`<td>${names[i]}</td><td>Tk ${fmt(r.gross)}</td><td>Tk ${fmt(r.empPF)}</td><td>Tk ${fmt(r.emplrPF)}</td><td>Tk ${fmt(r.tax)}</td><td>Tk ${fmt(r.net)}</td>`; tbody.appendChild(tr); sumGross+=r.gross; sumEmp+=r.empPF; sumEmpr+=r.emplrPF; sumTax+=r.tax; sumNet+=r.net; } $('monthTotals').innerHTML=`<tr><td>Total</td><td>Tk ${fmt(sumGross)}</td><td>Tk ${fmt(sumEmp)}</td><td>Tk ${fmt(sumEmpr)}</td><td>Tk ${fmt(sumTax)}</td><td>Tk ${fmt(sumNet)}</td></tr>`; renderChart(monthsArr); }
+
+// Chart renderer (animated SVG grouped bars)
+function renderChart(monthsArr){ const svg=$('chartSVG'); while(svg.firstChild) svg.removeChild(svg.firstChild); const w=1000, h=300; const padding={l:60,r:20,t:20,b:40}; const chartW=w-padding.l-padding.r; const chartH=h-padding.t-padding.b; const n=12; const groupW=chartW/n; const innerW=groupW*0.7; const barW=(innerW-9)/4; let maxVal=1; monthsArr.forEach(m=>{ if(!m) return; maxVal=Math.max(maxVal,m.gross,m.empPF,m.emplrPF,m.net); }); // grid
+ for(let i=0;i<=4;i++){ const y=padding.t + (chartH*i/4); const line=document.createElementNS('http://www.w3.org/2000/svg','line'); line.setAttribute('x1',padding.l); line.setAttribute('x2',w-padding.r); line.setAttribute('y1',y); line.setAttribute('y2',y); line.setAttribute('stroke','rgba(255,255,255,0.03)'); svg.appendChild(line); const lab=document.createElementNS('http://www.w3.org/2000/svg','text'); lab.setAttribute('x',padding.l-8); lab.setAttribute('y',y+4); lab.setAttribute('font-size',12); lab.setAttribute('text-anchor','end'); lab.setAttribute('fill','rgba(230,238,248,0.6)'); lab.textContent=Math.round(maxVal*(1-i/4)).toLocaleString('en-BD'); svg.appendChild(lab); }
+ const colors=['#0b74de','#2563eb','#60a5fa','#10b981']; const names=['gross','empPF','emplrPF','net']; const labels=['Jul','Aug','Sep','Oct','Nov','Dec','Jan','Feb','Mar','Apr','May','Jun']; for(let i=0;i<n;i++){ const baseX=padding.l + i*groupW + (groupW-innerW)/2; const m=monthsArr[i]||{gross:0,empPF:0,emplrPF:0,net:0}; for(let j=0;j<4;j++){ const val=m[names[j]]||0; const hBar = (val/maxVal)*chartH; const x=baseX + j*(barW+3); const y=padding.t + (chartH - hBar); const rect=document.createElementNS('http://www.w3.org/2000/svg','rect'); rect.setAttribute('x',x); rect.setAttribute('y',padding.t+chartH); rect.setAttribute('width',barW); rect.setAttribute('height',0); rect.setAttribute('fill',colors[j]); rect.setAttribute('rx',3); svg.appendChild(rect); // animate
+ setTimeout((r,y2,h2)=>{ r.setAttribute('y',y2); r.setAttribute('height',h2); }, 50 + i*30 + j*8, rect, y, hBar);
+ }
+ const lab=document.createElementNS('http://www.w3.org/2000/svg','text'); lab.setAttribute('x', baseX + innerW/2); lab.setAttribute('y', h-8); lab.setAttribute('font-size',11); lab.setAttribute('text-anchor','middle'); lab.setAttribute('fill','rgba(230,238,248,0.6)'); lab.textContent=labels[i]; svg.appendChild(lab);
+ }
+}
+
+// History management
+function renderHistory(){ const history=JSON.parse(localStorage.getItem('bd_history')||'[]'); const el=$('historyList'); if(history.length===0){ el.textContent='(no history yet)'; return; } el.innerHTML=''; history.forEach((h,idx)=>{ const d=new Date(h.ts); const div=document.createElement('div'); div.style.padding='8px'; div.style.borderBottom='1px solid rgba(255,255,255,0.03)'; div.innerHTML=`<div style="display:flex;justify-content:space-between"><div><strong>${h.fy}</strong><div class='small'>${d.toLocaleString()}</div><div class='small'>Net tax Tk ${fmt(h.results.net_tax)}</div></div><div><button class='btn ghost' data-idx='${idx}'>Load</button></div></div>`; el.appendChild(div); }); Array.from(el.querySelectorAll('button[data-idx]')).forEach(btn=>btn.addEventListener('click', ()=>{ loadHistoryItem(Number(btn.getAttribute('data-idx'))); })); }
+function loadHistoryItem(idx){ const history=JSON.parse(localStorage.getItem('bd_history')||'[]'); const item=history[idx]; if(!item) return alert('History not found'); const i=item.inputs; for(let k in i) if($(k)) $(k).value = i[k]; calcAll(); }
+$('clearHistory') && $('clearHistory').addEventListener('click', ()=>{ localStorage.removeItem('bd_history'); renderHistory(); });
+
+// Calculation core (full logic)
+function calcAll(){ const gross_juljan=toNum($('gross_juljan').value); const gross_febjun=toNum($('gross_febjun').value); const salary_13th=toNum($('salary_13th').value); const bonus_feb=toNum($('bonus_feb').value); const employer_pf_pct=toNum($('employer_pf_pct').value)/100; const employee_pf_pct=toNum($('employee_pf_pct').value)/100; const planned_investment=toNum($('planned_investment').value); const inv_dps=toNum($('inv_dps').value), inv_share=toNum($('inv_share').value), inv_other=toNum($('inv_other').value); const {months_juljan, months_febjun}=prorateMonths(); const slabs=loadSlabsAndRates();
+ const income_juljan=gross_juljan*months_juljan; const income_febjun=gross_febjun*months_febjun; const income_basic_total=income_juljan+income_febjun; const employer_pf_juljan=gross_juljan*employer_pf_pct*months_juljan; const employer_pf_febjun=gross_febjun*employer_pf_pct*months_febjun; const total_employer_pf=employer_pf_juljan+employer_pf_febjun; const employee_pf_juljan=gross_juljan*employee_pf_pct*months_juljan; const employee_pf_febjun=gross_febjun*employee_pf_pct*months_febjun; const total_employee_pf=employee_pf_juljan+employee_pf_febjun; const total_income=income_basic_total + total_employer_pf + salary_13th + bonus_feb; const exemption=Math.min(total_income/3,500000); const taxable_income=Math.max(0,total_income-exemption); const taxRes=computeTaxOnAmount(taxable_income,slabs); const gross_tax=taxRes.tax; const total_user_invest=planned_investment+inv_dps+inv_share+inv_other; const total_eligible_invest=total_user_invest+total_employee_pf+total_employer_pf; const rebate_a=0.03*taxable_income; const rebate_b=0.15*total_eligible_invest; const rebate_cap=1000000; const investment_rebate=Math.min(rebate_a,rebate_b,rebate_cap); const net_tax=Math.max(0,Math.round(gross_tax - investment_rebate)); const requiredQualInvest=Math.round(rebate_a/0.15); $('required_qual').value=requiredQualInvest;
+ // provisional monthly
+ const provisional_income_basic12=gross_juljan*12; const provisional_employer_pf12=gross_juljan*employer_pf_pct*12; const provisional_total_income=provisional_income_basic12 + provisional_employer_pf12 + salary_13th; const provisional_exemption=Math.min(provisional_total_income/3,500000); const provisional_taxable=Math.max(0,provisional_total_income-provisional_exemption); const provisional_gross_tax=computeTaxOnAmount(provisional_taxable,slabs).tax; const provisional_employee_pf12=gross_juljan*employee_pf_pct*12; const provisional_total_eligible_invest=planned_investment+inv_dps+inv_share+inv_other + provisional_employee_pf12 + provisional_employer_pf12; const provisional_rebate=Math.min(0.03*provisional_taxable,0.15*provisional_total_eligible_invest,rebate_cap); const provisional_net_tax=Math.max(0,Math.round(provisional_gross_tax - provisional_rebate)); const monthly_tax_provisional=Math.round(provisional_net_tax/12);
+ const tax_deducted_juljan_total = monthly_tax_provisional * months_juljan; let remaining_tax = Math.max(0, net_tax - tax_deducted_juljan_total); const febToJun = distributeMonthly(remaining_tax, months_febjun); const julToJan = Array(months_juljan).fill(monthly_tax_provisional);
+ const monthly_employee_pf_juljan = Math.round(gross_juljan * employee_pf_pct); const monthly_employee_pf_febjun = Math.round(gross_febjun * employee_pf_pct); const monthly_employer_pf_juljan = Math.round(gross_juljan * employer_pf_pct); const monthly_employer_pf_febjun = Math.round(gross_febjun * employer_pf_pct);
+ const monthsArr=[]; for(let i=0;i<months_juljan;i++){ const gross=gross_juljan; const empPF=monthly_employee_pf_juljan; const emplrPF=monthly_employer_pf_juljan; const tax=julToJan[i]; const net=gross - empPF - tax; monthsArr.push({gross,empPF,emplrPF,tax,net}); }
+ for(let i=0;i<months_febjun;i++){ const gross=gross_febjun; const empPF=monthly_employee_pf_febjun; const emplrPF=monthly_employer_pf_febjun; const tax=febToJun[i]; const net=gross - empPF - tax; monthsArr.push({gross,empPF,emplrPF,tax,net}); }
+ const topup_needed = Math.max(0, requiredQualInvest - total_eligible_invest);
+ $('topupBox').innerHTML=`<div style="padding:6px 4px"><strong>Required qualifying investment:</strong> Tk ${fmt(requiredQualInvest)}</div><div style="padding:6px 4px"><strong>Planned personal investment:</strong> Tk ${fmt(planned_investment)}</div><div style="padding:6px 4px"><strong>Total PF counted as investment:</strong> Tk ${fmt(total_employee_pf + total_employer_pf)}</div><div style="padding:6px 4px"><strong>Excluding Employee + Employer PF:</strong> Tk ${fmt(Math.max(0, requiredQualInvest - (total_employee_pf + total_employer_pf)))}</div><div style="padding:6px 4px"><strong>Other investments (DPS + Share + Other):</strong> Tk ${fmt(inv_dps + inv_share + inv_other)}</div><div style="padding:6px 4px"><strong>Total eligible investment:</strong> Tk ${fmt(total_eligible_invest)}</div><div style="padding:6px 4px"><strong style="color:${topup_needed>0? 'var(--danger)': 'green'}">Additional top-up needed:</strong> <span style="font-weight:700;color:${topup_needed>0? 'var(--danger)': 'green'}">Tk ${fmt(topup_needed)}</span></div>`;
+ $('summary').innerHTML=`<div style="padding-bottom:6px"><strong>Total income (12m salary + employer PF + 13th + bonus):</strong> Tk ${fmt(total_income)}</div><div style="padding-bottom:6px"><strong>Exemption applied:</strong> Tk ${fmt(exemption)}</div><div style="padding-bottom:6px"><strong>Taxable income:</strong> Tk ${fmt(taxable_income)}</div><div style="padding-bottom:6px"><strong>Gross tax (before rebate):</strong> Tk ${fmt(Math.round(gross_tax))}</div><div style="padding-bottom:6px"><strong>Investment rebate applied (est):</strong> Tk ${fmt(Math.round(investment_rebate))}</div><div style="padding-bottom:6px"><strong>Net annual tax (final):</strong> Tk ${fmt(net_tax)}</div>`;
+ generateMonthlyRows(monthsArr);
+ // breakdown
+ const breakdown = taxRes.breakdown.slice(); let breakHtml = '<table style="width:100%;border-collapse:collapse"><thead><tr><th>Slab limit</th><th>Rate</th><th>Amount taxed</th><th>Tax</th></tr></thead><tbody>'; breakdown.forEach(b=>{ breakHtml += `<tr><td>${b.limit===Infinity? 'Above':'Up to ' + b.limit}</td><td>${(b.rate*100).toFixed(2)}%</td><td>Tk ${fmt(b.amount)}</td><td>Tk ${fmt(Math.round(b.tax))}</td></tr>`; }); breakHtml += '</tbody></table>'; $('breakdownBox').innerHTML = breakHtml;
+ // save history
+ const now=new Date(); const fyLabel = now.getFullYear() + '-' + (now.getFullYear()+1); const history=JSON.parse(localStorage.getItem('bd_history')||'[]'); history.unshift({ts:Date.now(),fy:fyLabel,inputs:{gross_juljan,gross_febjun,salary_13th,bonus_feb,employer_pf_pct:employer_pf_pct*100,employee_pf_pct:employee_pf_pct*100,planned_investment,inv_dps,inv_share,inv_other},results:{total_income,taxable_income,gross_tax,investment_rebate,net_tax}}); localStorage.setItem('bd_history', JSON.stringify(history.slice(0,20))); renderHistory(); }
+
+// wire buttons
+$('calc').addEventListener('click', calcAll);
+$('exportCsv').addEventListener('click', ()=>{
+ const rows=[]; const tbody=$('monthTable').querySelectorAll('tbody tr'); rows.push(['Month','Gross','Employee PF','Employer PF','Tax','Net']); tbody.forEach(tr=>{ const cols=tr.querySelectorAll('td'); rows.push(Array.from(cols).map(c=>c.textContent.replace(/,/g,''))); }); const csv = rows.map(r=>r.join(',')).join('\n'); const blob=new Blob([csv],{type:'text/csv'}); const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download='taxsheet.csv'; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+});
+$('exportCsvAlt').addEventListener('click', ()=>{ $('exportCsv').click(); });
+$('printBtn').addEventListener('click', ()=>{ window.print(); });
+
+// CSV export for monthTable (separate)
+$('exportCsvAlt') && $('exportCsvAlt').addEventListener('click', ()=>{});
+
+// Save/load inputs
+(function loadInputs(){ const s=JSON.parse(localStorage.getItem('bd_inputs')||'{}'); for(let k in s) if($(k)) $(k).value=s[k]; })(); ['gross_juljan','gross_febjun','salary_13th','bonus_feb','employer_pf_pct','employee_pf_pct','planned_investment','inv_dps','inv_share','inv_other'].forEach(id=>{ if($(id)) $(id).addEventListener('change', ()=>{ const s=JSON.parse(localStorage.getItem('bd_inputs')||'{}'); s[id]=$(id).value; localStorage.setItem('bd_inputs', JSON.stringify(s)); }); });
+$('saveInputs') && $('saveInputs').addEventListener('click', ()=>{ const keys=['gross_juljan','gross_febjun','salary_13th','bonus_feb','employer_pf_pct','employee_pf_pct','planned_investment','inv_dps','inv_share','inv_other']; const s={}; keys.forEach(k=>{ if($(k)) s[k]=$(k).value }); localStorage.setItem('bd_inputs', JSON.stringify(s)); toast('Inputs saved'); });
+
+// Clear history already wired above
+
+// initial render
+renderHistory();
+calcAll();
+
+// Utility functions
+function renderChartPlaceholder(){ /* reserved */ }
+
+// PWA manifest download helper
+function downloadManifest(){ const manifest = { name: 'BD Income Tax App', short_name:'BD Tax', start_url:'.', display:'standalone', background_color:'#071022', theme_color:'#0a1224', icons:[{src:'icon-192.png',sizes:'192x192',type:'image/png'},{src:'icon-512.png',sizes:'512x512',type:'image/png'}] }; const blob = new Blob([JSON.stringify(manifest,null,2)],{type:'application/json'}); const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download='manifest.json'; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url); }
+
+// Helper computeTaxOnAmount referenced earlier is defined above
+
+</script>
+</body>
+</html>
