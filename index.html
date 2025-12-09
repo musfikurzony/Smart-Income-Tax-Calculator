@@ -6,43 +6,56 @@
 <title>BD Income Tax App — Pro (A1 / D2)</title>
 <meta name="theme-color" content="#0a1224" />
 <style>
-  :root{--bg:#06102a;--panel:#0b1220;--muted:#9ca3af;--accent:#0b74de;--accent-2:#2563eb;--danger:#ff8b8b}
-  html,body{height:100%;margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,'Noto Sans',Arial;background:linear-gradient(180deg,#06102a 0%, #071022 100%);color:#e6eef8;-webkit-font-smoothing:antialiased}
+  :root{
+    --bg:#06102a;--panel:#0b1220;--muted:#9ca3af;--accent:#0b74de;--accent-2:#2563eb;--danger:#ff8b8b;--gold:#d4af37;--card-shadow: rgba(11,116,222,0.08)
+  }
+  html[data-theme="dark"]{--bg:#06102a;--panel:#0b1220;--muted:#9ca3af;--accent:#0b74de;--accent-2:#2563eb;--text:#e6eef8;--border:rgba(255,255,255,0.04)}
+  html[data-theme="light"]{--bg:#f5f8fb;--panel:#ffffff;--muted:#65737e;--accent:#0b74de;--accent-2:#3b82f6;--text:#0b1224;--border:#e6eef8}
+  html[data-theme="gold-dark"]{--bg:#0b0710;--panel:#12100b;--muted:#f3e8d0;--accent:#d4af37;--accent-2:#ffdf7a;--text:#fff5e6;--border:rgba(212,175,55,0.16)}
+  html[data-theme="blue-light"]{--bg:#eef8ff;--panel:#ffffff;--muted:#4b6b8a;--accent:#0b74de;--accent-2:#60a5fa;--text:#04233b;--border:#dbeffd}
+
+  html,body{height:100%;margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,'Noto Sans',Arial;background:linear-gradient(180deg,var(--bg) 0%, var(--panel) 100%);color:var(--text, #e6eef8);-webkit-font-smoothing:antialiased}
   .app{max-width:1200px;margin:20px auto;padding:18px}
   header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px}
   .brand{display:flex;align-items:center;gap:12px}
-  .logo{width:52px;height:52px;border-radius:12px;background:linear-gradient(135deg,var(--accent),var(--accent-2));display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;box-shadow:0 8px 24px rgba(11,116,222,0.18)}
+  .logo{width:52px;height:52px;border-radius:12px;background:linear-gradient(135deg,var(--accent),var(--accent-2));display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;box-shadow:0 8px 24px var(--card-shadow)}
   h1{font-size:18px;margin:0}
-  .subtitle{font-size:13px;color:rgba(230,238,248,0.7)}
+  .subtitle{font-size:13px;color:var(--muted)}
   .controls{display:flex;gap:8px;align-items:center}
   .btn{background:linear-gradient(180deg,var(--accent),var(--accent-2));color:#fff;padding:8px 12px;border-radius:10px;border:0;cursor:pointer;font-weight:600}
-  .btn.ghost{background:transparent;color:var(--accent);border:1px solid rgba(255,255,255,0.06)}
+  .btn.ghost{background:transparent;color:var(--accent);border:1px solid var(--border)}
   .layout{display:grid;grid-template-columns:360px 1fr;gap:16px}
   @media(max-width:980px){.layout{grid-template-columns:1fr}}
-  .panel{background:rgba(255,255,255,0.03);padding:12px;border-radius:12px;border:1px solid rgba(255,255,255,0.04)}
-  label{display:block;margin-top:10px;font-weight:600;font-size:13px;color:rgba(230,238,248,0.9)}
-  input[type=number],select,input[type=text]{width:100%;padding:10px;border-radius:10px;border:1px solid rgba(255,255,255,0.04);margin-top:6px;background:transparent;color:inherit}
-  .small{font-size:13px;color:rgba(230,238,248,0.7)}
+  .panel{background:linear-gradient(180deg, rgba(255,255,255,0.02), transparent);padding:12px;border-radius:12px;border:1px solid var(--border);box-shadow:0 6px 18px rgba(0,0,0,0.06)}
+  /* golden thin border effect for gold theme */
+  html[data-theme="gold-dark"] .panel{border-color:rgba(212,175,55,0.28);box-shadow:0 6px 26px rgba(212,175,55,0.06);background:linear-gradient(180deg, rgba(212,175,55,0.03), rgba(255,255,255,0.02))}
+  label{display:block;margin-top:10px;font-weight:600;font-size:13px;color:var(--text)}
+  input[type=number],select,input[type=text]{width:100%;padding:10px;border-radius:10px;border:1px solid var(--border);margin-top:6px;background:transparent;color:inherit}
+  .small{font-size:13px;color:var(--muted)}
   .row{display:flex;gap:10px;align-items:center}
   .section{margin-bottom:12px}
-  .section-header{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;border-radius:10px;cursor:pointer;border:1px solid rgba(255,255,255,0.04);background:linear-gradient(180deg, rgba(255,255,255,0.02), transparent)}
+  .section-header{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;border-radius:10px;cursor:pointer;border:1px solid var(--border);background:linear-gradient(180deg, rgba(255,255,255,0.02), transparent)}
   .section-body{display:none;padding:12px}
-  .arrow{transition:transform .28s;color:rgba(230,238,248,0.7)}
+  .arrow{transition:transform .28s;color:var(--muted)}
   .arrow.open{transform:rotate(90deg)}
   .summary-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
   @media(max-width:980px){.summary-grid{grid-template-columns:1fr}}
-  .summary-tile{padding:12px;border-radius:10px;border:1px solid rgba(255,255,255,0.04);background:linear-gradient(180deg, rgba(255,255,255,0.02), transparent)}
-  .table-wrap{overflow:auto;border-radius:10px;border:1px solid rgba(255,255,255,0.04);margin-top:8px}
+  .summary-tile{padding:12px;border-radius:10px;border:1px solid var(--border);background:linear-gradient(180deg, rgba(255,255,255,0.02), transparent)}
+  .table-wrap{overflow:auto;border-radius:10px;border:1px solid var(--border);margin-top:8px}
   table{width:100%;border-collapse:collapse;min-width:720px}
   th,td{padding:10px;border-bottom:1px dashed rgba(255,255,255,0.03);text-align:left}
   thead th{position:sticky;top:0;background:transparent}
-  tfoot td{font-weight:700;border-top:2px solid rgba(255,255,255,0.04)}
+  tfoot td{font-weight:700;border-top:2px solid var(--border)}
   #chartSVG{width:100%;height:300px;border-radius:8px;margin-top:8px}
   .legend{display:flex;gap:10px;align-items:center;margin-top:8px}
   .legend .item{display:flex;gap:6px;align-items:center;font-size:13px}
   .swatch{width:12px;height:12px;border-radius:3px;display:inline-block}
-  footer{margin-top:16px;text-align:right;color:rgba(230,238,248,0.6);font-size:13px}
-  .muted-plain{color:rgba(230,238,248,0.65)}
+  footer{margin-top:16px;text-align:right;color:var(--muted);font-size:13px}
+  .muted-plain{color:var(--muted)}
+  /* theme picker select */
+  #themePicker{padding:8px 10px;border-radius:8px;border:1px solid var(--border);background:transparent;color:inherit}
+  /* subtle gold accents */
+  .gold-accent{background:linear-gradient(90deg, rgba(212,175,55,0.06), rgba(255,215,128,0.02));border:1px solid rgba(212,175,55,0.1)}
 </style>
 </head>
 <body data-theme="dark">
@@ -56,6 +69,13 @@
         </div>
       </div>
       <div class="controls">
+        <select id="themePicker">
+          <option value="dark">Dark</option>
+          <option value="light">Light</option>
+          <option value="gold-dark">Gold</option>
+          <option value="blue-light">Blue</option>
+          <option value="purple-light">Purple</option>
+        </select>
         <button id="darkToggle" class="btn ghost">Toggle Theme</button>
         <button id="printBtn" class="btn ghost">Export PDF</button>
         <button id="exportCsv" class="btn">Export CSV</button>
@@ -137,7 +157,7 @@
 
       <div>
         <div class="panel summary-grid">
-          <div class="summary-tile" id="topupBox">(click Calculate)</div>
+          <div class="summary-tile gold-accent" id="topupBox">(click Calculate)</div>
           <div class="summary-tile" id="summary">(click Calculate)</div>
         </div>
 
@@ -172,8 +192,9 @@ function toNum(v){return Number(v||0)}
 function fmt(x){return (Math.round(x)||0).toLocaleString('en-BD')}
 
 // Theme
-(function(){ const saved = localStorage.getItem('bd_theme') || 'dark'; document.body.setAttribute('data-theme', saved); })();
-$('darkToggle').addEventListener('click', ()=>{ const cur=document.body.getAttribute('data-theme'); const next=cur==='dark'?'light':'dark'; document.body.setAttribute('data-theme', next); localStorage.setItem('bd_theme', next); });
+(function(){ const saved = localStorage.getItem('bd_theme') || 'dark'; document.documentElement.setAttribute('data-theme', saved); const sel = $('themePicker'); if(sel) sel.value = saved; })();
+$('themePicker') && $('themePicker').addEventListener('change', (e)=>{ const next = e.target.value; document.documentElement.setAttribute('data-theme', next); localStorage.setItem('bd_theme', next); });
+$('darkToggle').addEventListener('click', ()=>{ const cur=document.documentElement.getAttribute('data-theme'); const next=cur==='dark'?'light':'dark'; document.documentElement.setAttribute('data-theme', next); localStorage.setItem('bd_theme', next); $('themePicker').value = next; });
 
 // Collapsible sections (accordion)
 (function(){ const headers = document.querySelectorAll('.section-header'); headers.forEach(h=>{ h.addEventListener('click', ()=>{ const id=h.dataset.target || h.nextElementSibling.id; const body = document.getElementById(id); const isOpen = body.style.display==='block'; document.querySelectorAll('.section-body').forEach(b=>b.style.display='none'); document.querySelectorAll('.arrow').forEach(a=>a.classList.remove('open')); if(!isOpen){ body.style.display='block'; h.querySelector('.arrow').classList.add('open'); } }); }); })();
@@ -237,7 +258,8 @@ function calcAll(){ const gross_juljan=toNum($('gross_juljan').value); const gro
 // wire buttons
 $('calc').addEventListener('click', calcAll);
 $('exportCsv').addEventListener('click', ()=>{
- const rows=[]; const tbody=$('monthTable').querySelectorAll('tbody tr'); rows.push(['Month','Gross','Employee PF','Employer PF','Tax','Net']); tbody.forEach(tr=>{ const cols=tr.querySelectorAll('td'); rows.push(Array.from(cols).map(c=>c.textContent.replace(/,/g,''))); }); const csv = rows.map(r=>r.join(',')).join('\n'); const blob=new Blob([csv],{type:'text/csv'}); const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download='taxsheet.csv'; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+ const rows=[]; const tbody=$('monthTable').querySelectorAll('tbody tr'); rows.push(['Month','Gross','Employee PF','Employer PF','Tax','Net']); tbody.forEach(tr=>{ const cols=tr.querySelectorAll('td'); rows.push(Array.from(cols).map(c=>c.textContent.replace(/,/g,''))); }); const csv = rows.map(r=>r.join(',')).join('
+'); const blob=new Blob([csv],{type:'text/csv'}); const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download='taxsheet.csv'; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
 });
 $('exportCsvAlt').addEventListener('click', ()=>{ $('exportCsv').click(); });
 $('printBtn').addEventListener('click', ()=>{ window.print(); });
