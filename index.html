@@ -7,14 +7,25 @@
 <meta name="theme-color" content="#0a1224" />
 <style>
   :root{
-    --bg:#06102a;--panel:#0b1220;--muted:#9ca3af;--accent:#0b74de;--accent-2:#2563eb;--danger:#ff8b8b;--gold:#d4af37;--card-shadow: rgba(11,116,222,0.08)
+    --bg:#06102a;
+    --panel:#0b1220;
+    --muted:#9ca3af;
+    --accent:#0b74de;
+    --accent-2:#2563eb;
+    --danger:#ff8b8b;
+    --gold:#d4af37;
+    --card-shadow: rgba(11,116,222,0.08);
+    --card-bg: rgba(255,255,255,0.02);
+    --text-color: #e6eef8;
+    --border-color: rgba(255,255,255,0.04);
   }
-  html[data-theme="dark"]{--bg:#06102a;--panel:#0b1220;--muted:#9ca3af;--accent:#0b74de;--accent-2:#2563eb;--text:#e6eef8;--border:rgba(255,255,255,0.04)}
-  html[data-theme="light"]{--bg:#f5f8fb;--panel:#ffffff;--muted:#65737e;--accent:#0b74de;--accent-2:#3b82f6;--text:#0b1224;--border:#e6eef8}
-  html[data-theme="gold-dark"]{--bg:#0b0710;--panel:#12100b;--muted:#f3e8d0;--accent:#d4af37;--accent-2:#ffdf7a;--text:#fff5e6;--border:rgba(212,175,55,0.16)}
-  html[data-theme="blue-light"]{--bg:#eef8ff;--panel:#ffffff;--muted:#4b6b8a;--accent:#0b74de;--accent-2:#60a5fa;--text:#04233b;--border:#dbeffd}
+  html[data-theme="dark"]{--bg:#06102a;--panel:#0b1220;--muted:#9ca3af;--accent:#0b74de;--accent-2:#2563eb;--text-color:#e6eef8;--border-color:rgba(255,255,255,0.04);--card-bg:rgba(255,255,255,0.02)}
+  html[data-theme="light"]{--bg:#f5f8fb;--panel:#ffffff;--muted:#65737e;--accent:#0b74de;--accent-2:#3b82f6;--text-color:#0b1224;--border-color:#e6eef8;--card-bg:#ffffff}
+  html[data-theme="gold-dark"]{--bg:#0b0710;--panel:#12100b;--muted:#f3e8d0;--accent:#d4af37;--accent-2:#ffdf7a;--text-color:#fff5e6;--border-color:rgba(212,175,55,0.16);--card-bg:rgba(212,175,55,0.03)}
+  html[data-theme="blue-light"]{--bg:#eef8ff;--panel:#ffffff;--muted:#4b6b8a;--accent:#0b74de;--accent-2:#60a5fa;--text-color:#04233b;--border-color:#dbeffd;--card-bg:#ffffff}
+  html[data-theme="purple-light"]{--bg:#fbf7ff;--panel:#ffffff;--muted:#6b4b8a;--accent:#8b00ff;--accent-2:#b76bff;--text-color:#2b0040;--border-color:#e8d8ff;--card-bg:#ffffff}
 
-  html,body{height:100%;margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,'Noto Sans',Arial;background:linear-gradient(180deg,var(--bg) 0%, var(--panel) 100%);color:var(--text, #e6eef8);-webkit-font-smoothing:antialiased}
+  html,body{height:100%;margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,'Noto Sans',Arial;background:linear-gradient(180deg,var(--bg) 0%, var(--panel) 100%);color:var(--text-color);-webkit-font-smoothing:antialiased}
   .app{max-width:1200px;margin:20px auto;padding:18px}
   header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px}
   .brand{display:flex;align-items:center;gap:12px}
@@ -23,29 +34,29 @@
   .subtitle{font-size:13px;color:var(--muted)}
   .controls{display:flex;gap:8px;align-items:center}
   .btn{background:linear-gradient(180deg,var(--accent),var(--accent-2));color:#fff;padding:8px 12px;border-radius:10px;border:0;cursor:pointer;font-weight:600}
-  .btn.ghost{background:transparent;color:var(--accent);border:1px solid var(--border)}
+  .btn.ghost{background:transparent;color:var(--accent);border:1px solid var(--border-color)}
   .layout{display:grid;grid-template-columns:360px 1fr;gap:16px}
   @media(max-width:980px){.layout{grid-template-columns:1fr}}
-  .panel{background:linear-gradient(180deg, rgba(255,255,255,0.02), transparent);padding:12px;border-radius:12px;border:1px solid var(--border);box-shadow:0 6px 18px rgba(0,0,0,0.06)}
+  .panel{background:var(--card-bg);padding:12px;border-radius:12px;border:1px solid var(--border-color);box-shadow:0 6px 18px rgba(0,0,0,0.06)}
   /* golden thin border effect for gold theme */
   html[data-theme="gold-dark"] .panel{border-color:rgba(212,175,55,0.28);box-shadow:0 6px 26px rgba(212,175,55,0.06);background:linear-gradient(180deg, rgba(212,175,55,0.03), rgba(255,255,255,0.02))}
-  label{display:block;margin-top:10px;font-weight:600;font-size:13px;color:var(--text)}
-  input[type=number],select,input[type=text]{width:100%;padding:10px;border-radius:10px;border:1px solid var(--border);margin-top:6px;background:transparent;color:inherit}
+  label{display:block;margin-top:10px;font-weight:600;font-size:13px;color:var(--text-color)}
+  input[type=number],select,input[type=text]{width:100%;padding:10px;border-radius:10px;border:1px solid var(--border-color);margin-top:6px;background:transparent;color:inherit}
   .small{font-size:13px;color:var(--muted)}
   .row{display:flex;gap:10px;align-items:center}
   .section{margin-bottom:12px}
-  .section-header{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;border-radius:10px;cursor:pointer;border:1px solid var(--border);background:linear-gradient(180deg, rgba(255,255,255,0.02), transparent)}
+  .section-header{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;border-radius:10px;cursor:pointer;border:1px solid var(--border-color);background:linear-gradient(180deg, rgba(255,255,255,0.02), transparent)}
   .section-body{display:none;padding:12px}
   .arrow{transition:transform .28s;color:var(--muted)}
   .arrow.open{transform:rotate(90deg)}
   .summary-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
   @media(max-width:980px){.summary-grid{grid-template-columns:1fr}}
-  .summary-tile{padding:12px;border-radius:10px;border:1px solid var(--border);background:linear-gradient(180deg, rgba(255,255,255,0.02), transparent)}
-  .table-wrap{overflow:auto;border-radius:10px;border:1px solid var(--border);margin-top:8px}
+  .summary-tile{padding:12px;border-radius:10px;border:1px solid var(--border-color);background:var(--card-bg)}
+  .table-wrap{overflow:auto;border-radius:10px;border:1px solid var(--border-color);margin-top:8px}
   table{width:100%;border-collapse:collapse;min-width:720px}
   th,td{padding:10px;border-bottom:1px dashed rgba(255,255,255,0.03);text-align:left}
   thead th{position:sticky;top:0;background:transparent}
-  tfoot td{font-weight:700;border-top:2px solid var(--border)}
+  tfoot td{font-weight:700;border-top:2px solid var(--border-color)}
   #chartSVG{width:100%;height:300px;border-radius:8px;margin-top:8px}
   .legend{display:flex;gap:10px;align-items:center;margin-top:8px}
   .legend .item{display:flex;gap:6px;align-items:center;font-size:13px}
@@ -53,12 +64,34 @@
   footer{margin-top:16px;text-align:right;color:var(--muted);font-size:13px}
   .muted-plain{color:var(--muted)}
   /* theme picker select */
-  #themePicker{padding:8px 10px;border-radius:8px;border:1px solid var(--border);background:transparent;color:inherit}
+  #themePicker{padding:8px 10px;border-radius:8px;border:1px solid var(--border-color);background:transparent;color:inherit}
   /* subtle gold accents */
   .gold-accent{background:linear-gradient(90deg, rgba(212,175,55,0.06), rgba(255,215,128,0.02));border:1px solid rgba(212,175,55,0.1)}
+
+  /* premium transitions */
+  body, .panel, .section, .summary-tile, button { transition: all 0.28s cubic-bezier(.2,.9,.2,1); }
+
+  /* custom scrollbar */
+  ::-webkit-scrollbar { height:10px; width:10px }
+  ::-webkit-scrollbar-track { background: transparent }
+  ::-webkit-scrollbar-thumb { background: linear-gradient(180deg,var(--accent),var(--accent-2)); border-radius:8px }
+
+  /* button base */
+  button { position: relative; overflow: hidden }
+  button::after { content:""; position:absolute; width:10px; height:10px; background:rgba(255,255,255,0.28); border-radius:50%; transform:scale(0); opacity:0; transition: transform .5s ease, opacity .6s ease }
+  button:active::after { transform:scale(18); opacity:1 }
+
+  /* toast */
+  #toast{ position: fixed; right:18px; bottom:18px; padding:10px 14px; border-radius:10px; background:rgba(0,0,0,0.6); color:#fff; opacity:0; transform:translateY(10px); transition:opacity .3s, transform .3s; z-index:9999 }
+  #toast.show{ opacity:1; transform:translateY(0) }
+
+  /* skeleton */
+  .skeleton{ border-radius:8px; background: linear-gradient(90deg,#2a2a2a 25%,#3a3a3a 50%,#2a2a2a 75%); background-size:200% 100%; animation:shimmer 1.6s infinite }
+  @keyframes shimmer{ 0%{background-position:-200% 0} 100%{background-position:200% 0} }
 </style>
 </head>
 <body data-theme="dark">
+  <div id="toast"></div>
   <div class="app">
     <header>
       <div class="brand">
@@ -69,16 +102,16 @@
         </div>
       </div>
       <div class="controls">
-        <select id="themePicker">
+        <select id="themePicker" aria-label="Theme picker">
           <option value="dark">Dark</option>
           <option value="light">Light</option>
           <option value="gold-dark">Gold</option>
           <option value="blue-light">Blue</option>
           <option value="purple-light">Purple</option>
         </select>
-        <button id="darkToggle" class="btn ghost">Toggle Theme</button>
-        <button id="printBtn" class="btn ghost">Export PDF</button>
-        <button id="exportCsv" class="btn">Export CSV</button>
+        <button id="darkToggle" class="btn ghost" type="button">Toggle Theme</button>
+        <button id="printBtn" class="btn ghost" type="button">Export PDF</button>
+        <button id="exportCsv" class="btn" type="button">Export CSV</button>
       </div>
     </header>
 
@@ -140,7 +173,7 @@
             <input id="slab4" type="number" value="2000000">
             <label>Rates (comma separated) — example: 0%,10%,15%,20%,25%,30%</label>
             <input id="ratesText" type="text" value="0%,10%,15%,20%,25%,30%">
-            <div class="row" style="margin-top:8px"><button id="saveSettings" class="btn">Save settings</button><button id="resetSettings" class="btn ghost">Reset defaults</button></div>
+            <div class="row" style="margin-top:8px"><button id="saveSettings" class="btn" type="button">Save settings</button><button id="resetSettings" class="btn ghost" type="button">Reset defaults</button></div>
           </div>
         </div>
 
@@ -148,11 +181,11 @@
           <div class="section-header" data-target="historySection"><div><strong>History (Last 20)</strong></div><div class="arrow">▶</div></div>
           <div class="section-body" id="historySection">
             <div id="historyList" class="small muted-plain">(no history yet)</div>
-            <div style="margin-top:8px" class="row"><button id="clearHistory" class="btn ghost">Clear History</button><button id="saveInputs" class="btn ghost">Save Inputs</button></div>
+            <div style="margin-top:8px" class="row"><button id="clearHistory" class="btn ghost" type="button">Clear History</button><button id="saveInputs" class="btn ghost" type="button">Save Inputs</button></div>
           </div>
         </div>
 
-        <div style="margin-top:12px" class="row"><button id="calc" class="btn">Calculate</button><button id="exportCsvAlt" class="btn ghost">Export Month CSV</button></div>
+        <div style="margin-top:12px" class="row"><button id="calc" class="btn" type="button">Calculate</button><button id="exportCsvAlt" class="btn ghost" type="button">Export Month CSV</button></div>
       </div>
 
       <div>
@@ -201,12 +234,12 @@ $('darkToggle').addEventListener('click', ()=>{ const cur=document.documentEleme
 
 // Settings persistence
 function loadSettings(){ const s=JSON.parse(localStorage.getItem('bd_settings')||'{}'); if(s.slab0) $('slab0').value=s.slab0; if(s.slab1) $('slab1').value=s.slab1; if(s.slab2) $('slab2').value=s.slab2; if(s.slab3) $('slab3').value=s.slab3; if(s.slab4) $('slab4').value=s.slab4; if(s.ratesText) $('ratesText').value=s.ratesText; }
-function saveSettings(){ const s={slab0:$('slab0').value,slab1:$('slab1').value,slab2:$('slab2').value,slab3:$('slab3').value,slab4:$('slab4').value,ratesText:$('ratesText').value}; localStorage.setItem('bd_settings', JSON.stringify(s)); toast('Settings saved'); }
+function saveSettings(){ const s={slab0:$('slab0').value,slab1:$('slab1').value,slab2:$('slab2').value,slab3:$('slab3').value,slab4:$('slab4').value,ratesText:$('ratesText').value}; localStorage.setItem('bd_settings', JSON.stringify(s)); showToast('Settings saved'); }
 $('saveSettings') && $('saveSettings').addEventListener('click', saveSettings);
 $('resetSettings') && $('resetSettings').addEventListener('click', ()=>{ localStorage.removeItem('bd_settings'); location.reload(); }); loadSettings();
 
-// Toast
-function toast(msg, time=1200){ const el=document.createElement('div'); el.textContent=msg; el.style.position='fixed'; el.style.right='18px'; el.style.bottom='18px'; el.style.padding='10px 14px'; el.style.borderRadius='10px'; el.style.background='rgba(255,255,255,0.04)'; el.style.border='1px solid rgba(255,255,255,0.06)'; document.body.appendChild(el); setTimeout(()=>{ el.style.opacity=0; setTimeout(()=>el.remove(),300); },time); }
+// Toast helper
+function showToast(msg, time=1400){ const t=$('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'), time); }
 
 // Parse rates helper
 function parseRates(text){ return text.split(',').map(s=>{ s=s.trim(); if(s.endsWith('%')) return parseFloat(s.replace('%',''))/100; const v=parseFloat(s); if(!isNaN(v) && v>1) return v/100; return isNaN(v)?0:v; }); }
@@ -258,8 +291,7 @@ function calcAll(){ const gross_juljan=toNum($('gross_juljan').value); const gro
 // wire buttons
 $('calc').addEventListener('click', calcAll);
 $('exportCsv').addEventListener('click', ()=>{
- const rows=[]; const tbody=$('monthTable').querySelectorAll('tbody tr'); rows.push(['Month','Gross','Employee PF','Employer PF','Tax','Net']); tbody.forEach(tr=>{ const cols=tr.querySelectorAll('td'); rows.push(Array.from(cols).map(c=>c.textContent.replace(/,/g,''))); }); const csv = rows.map(r=>r.join(',')).join('
-'); const blob=new Blob([csv],{type:'text/csv'}); const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download='taxsheet.csv'; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+ const rows=[]; const tbody=$('monthTable').querySelectorAll('tbody tr'); rows.push(['Month','Gross','Employee PF','Employer PF','Tax','Net']); tbody.forEach(tr=>{ const cols=tr.querySelectorAll('td'); rows.push(Array.from(cols).map(c=>c.textContent.replace(/,/g,''))); }); const csv = rows.map(r=>r.join(',')).join('\n'); const blob=new Blob([csv],{type:'text/csv'}); const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download='taxsheet.csv'; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
 });
 $('exportCsvAlt').addEventListener('click', ()=>{ $('exportCsv').click(); });
 $('printBtn').addEventListener('click', ()=>{ window.print(); });
@@ -269,7 +301,7 @@ $('exportCsvAlt') && $('exportCsvAlt').addEventListener('click', ()=>{});
 
 // Save/load inputs
 (function loadInputs(){ const s=JSON.parse(localStorage.getItem('bd_inputs')||'{}'); for(let k in s) if($(k)) $(k).value=s[k]; })(); ['gross_juljan','gross_febjun','salary_13th','bonus_feb','employer_pf_pct','employee_pf_pct','planned_investment','inv_dps','inv_share','inv_other'].forEach(id=>{ if($(id)) $(id).addEventListener('change', ()=>{ const s=JSON.parse(localStorage.getItem('bd_inputs')||'{}'); s[id]=$(id).value; localStorage.setItem('bd_inputs', JSON.stringify(s)); }); });
-$('saveInputs') && $('saveInputs').addEventListener('click', ()=>{ const keys=['gross_juljan','gross_febjun','salary_13th','bonus_feb','employer_pf_pct','employee_pf_pct','planned_investment','inv_dps','inv_share','inv_other']; const s={}; keys.forEach(k=>{ if($(k)) s[k]=$(k).value }); localStorage.setItem('bd_inputs', JSON.stringify(s)); toast('Inputs saved'); });
+$('saveInputs') && $('saveInputs').addEventListener('click', ()=>{ const keys=['gross_juljan','gross_febjun','salary_13th','bonus_feb','employer_pf_pct','employee_pf_pct','planned_investment','inv_dps','inv_share','inv_other']; const s={}; keys.forEach(k=>{ if($(k)) s[k]=$(k).value }); localStorage.setItem('bd_inputs', JSON.stringify(s)); showToast('Inputs saved'); });
 
 // Clear history already wired above
 
@@ -283,7 +315,8 @@ function renderChartPlaceholder(){ /* reserved */ }
 // PWA manifest download helper
 function downloadManifest(){ const manifest = { name: 'BD Income Tax App', short_name:'BD Tax', start_url:'.', display:'standalone', background_color:'#071022', theme_color:'#0a1224', icons:[{src:'icon-192.png',sizes:'192x192',type:'image/png'},{src:'icon-512.png',sizes:'512x512',type:'image/png'}] }; const blob = new Blob([JSON.stringify(manifest,null,2)],{type:'application/json'}); const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download='manifest.json'; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url); }
 
-// Helper computeTaxOnAmount referenced earlier is defined above
+// button ripple listener
+document.addEventListener("pointerdown", function(e){ const t=e.target.closest('button'); if(!t) return; const rect=t.getBoundingClientRect(); t.style.setProperty('--x', (e.clientX - rect.left) + 'px'); t.style.setProperty('--y', (e.clientY - rect.top) + 'px'); });
 
 </script>
 </body>
