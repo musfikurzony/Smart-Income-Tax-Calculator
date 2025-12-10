@@ -1,0 +1,21 @@
+{
+  "name": "Smart Income Tax Calculator",
+  "short_name": "TaxCalc",
+  "start_url": "/Smart-Income-Tax-Calculator/index.html",
+  "display": "standalone",
+  "background_color": "#000000",
+  "theme_color": "#d4af37",
+  "description": "A premium Bangladeshi smart tax calculator with themes, charts, PDF export and PWA support.",
+  "icons": [
+    {
+      "src": "icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
