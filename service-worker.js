@@ -1,59 +1,60 @@
-// Smart Income Tax Calculator – Advanced PWA Service Worker
-const CACHE_VERSION = "v1.0.0";
-const CACHE_NAME = `smart-tax-cache-${CACHE_VERSION}`;
-
-const FILES_TO_CACHE = [
-  "/Smart-Income-Tax-Calculator/",
-  "/Smart-Income-Tax-Calculator/index.html",
-  "/Smart-Income-Tax-Calculator/manifest.json",
-  "/Smart-Income-Tax-Calculator/icons/icon-192.png",
-  "/Smart-Income-Tax-Calculator/icons/icon-512.png"
+/* Smart Income Tax Calculator — offline support.
+ * Paths are relative, so the app works from any folder or domain.
+ * Bump CACHE_VERSION whenever you change a file so users get the update. */
+const CACHE_VERSION = 'v2.0.0';
+const CACHE_NAME = `smart-tax-${CACHE_VERSION}`;
+const APP_SHELL = [
+  './',
+  './index.html',
+  './css/style.css',
+  './js/tax-rules.js',
+  './js/engine.js',
+  './js/app.js',
+  './manifest.json',
+  './icons/icon.svg',
+  './icons/icon-192.png',
+  './icons/icon-512.png'
 ];
 
-// INSTALL
-self.addEventListener("install", event => {
+self.addEventListener('install', (event) => {
+  event.waitUntil(caches.open(CACHE_NAME).then((c) => c.addAll(APP_SHELL)).then(() => self.skipWaiting()));
+});
+
+self.addEventListener('activate', (event) => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then(cache => cache.addAll(FILES_TO_CACHE))
-  );
-  self.skipWaiting();
-});
-
-// ACTIVATE
-self.addEventListener("activate", event => {
-  event.waitUntil(
-    caches.keys().then(keys =>
-      Promise.all(
-        keys.map(key => key !== CACHE_NAME && caches.delete(key))
-      )
-    )
-  );
-  self.clients.claim();
-});
-
-// FETCH
-self.addEventListener("fetch", event => {
-  event.respondWith(
-    caches.match(event.request).then(cachedRes => {
-      if (cachedRes) return cachedRes;
-
-      return fetch(event.request)
-        .then(networkRes => {
-          if (!networkRes || networkRes.status !== 200) return networkRes;
-
-          caches.open(CACHE_NAME).then(cache =>
-            cache.put(event.request, networkRes.clone())
-          );
-
-          return networkRes;
-        })
-        .catch(() => cachedRes);
-    })
+    caches.keys()
+      .then((keys) => Promise.all(keys.filter((k) => k.startsWith('smart-tax-') && k !== CACHE_NAME).map((k) => caches.delete(k))))
+      .then(() => self.clients.claim())
   );
 });
 
-// SKIP WAITING handler
-self.addEventListener("message", event => {
-  if (event.data && event.data.type === "SKIP_WAITING") {
-    self.skipWaiting();
+/* Network first for the app's own files (so rule updates arrive quickly),
+ * falling back to the cache when offline. Fonts: cache first. */
+self.addEventListener('fetch', (event) => {
+  const req = event.request;
+  if (req.method !== 'GET') return;
+  const url = new URL(req.url);
+  const isFont = /fonts\.(googleapis|gstatic)\.com$/.test(url.hostname);
+  if (url.origin !== self.location.origin && !isFont) return;
+
+  if (isFont) {
+    event.respondWith(
+      caches.match(req).then((hit) => hit || fetch(req).then((res) => {
+        const copy = res.clone();
+        caches.open(CACHE_NAME).then((c) => c.put(req, copy));
+        return res;
+      }))
+    );
+    return;
   }
+
+  event.respondWith(
+    fetch(req).then((res) => {
+      if (res && res.ok) {
+        const copy = res.clone();
+        caches.open(CACHE_NAME).then((c) => c.put(req, copy));
+      }
+      return res;
+    }).catch(() => caches.match(req).then((hit) => hit || caches.match('./index.html')))
+  );
 });
