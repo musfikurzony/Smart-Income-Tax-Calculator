@@ -1,7 +1,7 @@
 /* Smart Income Tax Calculator — offline support.
  * Paths are relative, so the app works from any folder or domain.
  * Bump CACHE_VERSION whenever you change a file so users get the update. */
-const CACHE_VERSION = 'v2.1.0';
+const CACHE_VERSION = 'v2.2.0';
 const CACHE_NAME = `smart-tax-${CACHE_VERSION}`;
 const APP_SHELL = [
   './',

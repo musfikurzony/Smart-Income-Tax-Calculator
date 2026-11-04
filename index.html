@@ -29,6 +29,7 @@
     <nav class="tabs" role="tablist">
       <button class="tab" role="tab" data-view="calc" aria-selected="true" data-i18n="tabCalc"></button>
       <button class="tab" role="tab" data-view="guide" aria-selected="false" data-i18n="tabGuide"></button>
+      <button class="tab" role="tab" data-view="report" aria-selected="false" data-i18n="tabReport"></button>
       <button class="tab" role="tab" data-view="settings" aria-selected="false" data-i18n="tabSettings"></button>
     </nav>
     <div class="tools">
@@ -227,6 +228,102 @@
   <!-- ================= GUIDE ================= -->
   <section class="view" id="view-guide" role="tabpanel" hidden>
     <div class="guide" id="guideRoot"></div>
+  </section>
+
+  <!-- ================= REPORT ================= -->
+  <section class="view" id="view-report" role="tabpanel" hidden>
+    <div class="grid report-grid">
+      <div class="inputs-col">
+        <div class="card">
+          <h2 data-i18n="rpFormTitle"></h2>
+          <p class="sub" style="margin:4px 0 0" data-i18n="rpFormSub"></p>
+          <div class="report-actions" style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px">
+            <button class="btn" id="rpPrint" type="button" data-i18n="rpPrint"></button>
+            <button class="btn ghost" id="rpCopy" type="button" data-i18n="rpCopy"></button>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2><span class="step" data-num="1"></span> <span data-i18n="rpYearCat"></span></h2>
+          <div class="field"><label for="rp_year" data-i18n="yearField"></label><select id="rp_year"></select></div>
+          <div class="field"><label for="rp_category" data-i18n="categoryField"></label><select id="rp_category"></select></div>
+        </div>
+
+        <div class="card">
+          <h2><span class="step" data-num="2"></span> <span data-i18n="rpSalary"></span></h2>
+          <div class="field">
+            <label for="rp_grossBefore" data-i18n="rpGross"></label>
+            <div class="money"><input id="rp_grossBefore" type="number" min="0" step="1" inputmode="decimal" /></div>
+            <div class="hint" data-rpwords="grossBefore"></div>
+          </div>
+          <div class="row2">
+            <div class="field"><label for="rp_incrementMonth" data-i18n="incrementMonth"></label><select id="rp_incrementMonth"></select></div>
+            <div class="field" id="rp_grossAfterField">
+              <label for="rp_grossAfter" data-i18n="grossAfter"></label>
+              <div class="money"><input id="rp_grossAfter" type="number" min="0" step="1" inputmode="decimal" /></div>
+            </div>
+          </div>
+          <div class="row2">
+            <div class="field"><label for="rp_thirteenth" data-i18n="rpThirteenth"></label><div class="money"><input id="rp_thirteenth" type="number" min="0" step="1" inputmode="decimal" /></div></div>
+            <div class="field"><label for="rp_incentive" data-i18n="rpIncentive"></label><div class="money"><input id="rp_incentive" type="number" min="0" step="1" inputmode="decimal" /></div></div>
+          </div>
+          <div class="field"><label for="rp_overtime" data-i18n="rpOvertime"></label><div class="money"><input id="rp_overtime" type="number" min="0" step="1" inputmode="decimal" /></div></div>
+        </div>
+
+        <div class="card">
+          <h2><span class="step" data-num="3"></span> <span data-i18n="rpInvestTitle"></span></h2>
+          <div class="field">
+            <div class="seg" id="rp_investSeg" role="group">
+              <button type="button" data-val="full" data-i18n="rpInvestFull"></button>
+              <button type="button" data-val="actual" data-i18n="rpInvestActual"></button>
+            </div>
+          </div>
+          <div class="field" id="rp_investmentField"><label for="rp_investment" data-i18n="rpInvestAmt"></label><div class="money"><input id="rp_investment" type="number" min="0" step="1" inputmode="decimal" /></div></div>
+        </div>
+
+        <div class="card">
+          <h2><span class="step" data-num="4"></span> <span data-i18n="rpAdjTitle"></span></h2>
+          <div class="row2">
+            <div class="field"><label for="rp_excessAdj" data-i18n="rpExcess"></label><div class="money"><input id="rp_excessAdj" type="number" min="0" step="1" inputmode="decimal" /></div></div>
+            <div class="field"><label for="rp_carTax" data-i18n="rpCar"></label><div class="money"><input id="rp_carTax" type="number" min="0" step="1" inputmode="decimal" /></div></div>
+          </div>
+          <div class="row2">
+            <div class="field"><label for="rp_tdsMonth" data-i18n="rpTdsMonth"></label><select id="rp_tdsMonth"></select></div>
+            <div class="field" id="rp_tdsAmountField"><label for="rp_tdsAmount" data-i18n="rpTdsAmt"></label><div class="money"><input id="rp_tdsAmount" type="number" min="0" step="1" inputmode="decimal" /></div></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2><span class="step" data-num="5"></span> <span data-i18n="rpStructure"></span></h2>
+          <p class="sub" style="margin:-6px 0 12px" data-i18n="rpStructureHint"></p>
+          <div class="row2">
+            <div class="field"><label for="rp_convMonthly" data-i18n="rpConv"></label><div class="money"><input id="rp_convMonthly" type="number" min="0" step="1" /></div></div>
+            <div class="field"><label for="rp_medicalPct" data-i18n="rpMedical"></label><input id="rp_medicalPct" type="number" min="0" max="100" step="any" /></div>
+          </div>
+          <div class="row2">
+            <div class="field"><label for="rp_hraPct" data-i18n="rpHra"></label><input id="rp_hraPct" type="number" min="0" max="200" step="any" /></div>
+            <div class="field"><label for="rp_employerPfPct" data-i18n="rpPf"></label><input id="rp_employerPfPct" type="number" min="0" max="100" step="any" /></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2><span class="step" data-num="6"></span> <span data-i18n="rpPersonal"></span></h2>
+          <p class="sub" style="margin:-6px 0 12px" data-i18n="rpPersonalHint"></p>
+          <div class="field"><label for="rp_name" data-i18n="rpName"></label><input id="rp_name" type="text" autocomplete="name" /></div>
+          <div class="row2">
+            <div class="field"><label for="rp_staffId" data-i18n="rpStaffId"></label><input id="rp_staffId" type="text" /></div>
+            <div class="field"><label for="rp_joining" data-i18n="rpJoining"></label><input id="rp_joining" type="text" placeholder="01.11.18" /></div>
+          </div>
+          <div class="field"><label for="rp_designation" data-i18n="rpDesignation"></label><input id="rp_designation" type="text" /></div>
+          <div class="field"><label for="rp_department" data-i18n="rpDepartment"></label><input id="rp_department" type="text" /></div>
+          <div class="field"><label for="rp_tin" data-i18n="rpTin"></label><input id="rp_tin" type="text" inputmode="numeric" /></div>
+        </div>
+      </div>
+
+      <div class="results-col">
+        <div class="paper-wrap"><div class="paper" id="coiSheet"></div></div>
+      </div>
+    </div>
   </section>
 
   <!-- ================= SETTINGS ================= -->

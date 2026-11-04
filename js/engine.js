@@ -195,6 +195,70 @@
     return r;
   }
 
+  /* ---------------- HR-style "Computation of Income" report ---------------- */
+
+  /**
+   * Builds the figures for a payroll-style tax computation sheet.
+   * Gross salary is split into basic, house rent, conveyance and medical:
+   *   conveyance = fixed monthly amount × 12
+   *   medical    = medicalPct% of gross
+   *   basic + house rent = the rest, with house rent = hraPct% of basic
+   * The employer's PF is employerPfPct% of gross.
+   */
+  function computeCOI(p, rules) {
+    const months = [];
+    const inc = num(p.incrementMonth);
+    for (let i = 0; i < 12; i++) months.push(inc >= 0 && i >= inc ? pos(p.grossAfter) : pos(p.grossBefore));
+    const yearlyGross = months.reduce((a, b) => a + b, 0);
+    const conveyance = Math.min(pos(p.convMonthly) * 12, yearlyGross);
+    const medical = (yearlyGross * pos(p.medicalPct)) / 100;
+    const basic = Math.max(0, yearlyGross - conveyance - medical) / (1 + pos(p.hraPct) / 100);
+    const houseRent = (basic * pos(p.hraPct)) / 100;
+    const employerPF = (yearlyGross * pos(p.employerPfPct)) / 100;
+    const incentive = pos(p.incentive);
+    const thirteenth = pos(p.thirteenth);
+    const overtime = pos(p.overtime);
+    const totalIncome = yearlyGross + incentive + thirteenth + overtime + employerPF;
+
+    const ex = rules.salaryExemption || { divisor: 3, cap: 500000 };
+    const exemptionShare = totalIncome / Math.max(1, num(ex.divisor));
+    const exemption = Math.min(exemptionShare, pos(ex.cap));
+    const taxable = Math.max(0, totalIncome - exemption);
+
+    const threshold = thresholdFor(rules, p.category || 'general', p.disabledChildren);
+    const slab = taxOnBands(taxable, buildBands(rules, threshold));
+    const grossTax = slab.tax;
+
+    const rb = rules.rebate || { incomePct: 3, investPct: 15, cap: 1000000 };
+    const rebateByIncome = (taxable * num(rb.incomePct)) / 100;
+    const rebateCap = pos(rb.cap);
+    const investNeeded = num(rb.investPct) > 0 ? (Math.min(rebateByIncome, rebateCap) * 100) / num(rb.investPct) : 0;
+    const investment = p.investMode === 'actual' ? pos(p.investment) : investNeeded;
+    const rebateByInvest = (investment * num(rb.investPct)) / 100;
+    const rebate = Math.min(rebateByIncome, rebateByInvest, rebateCap, grossTax);
+
+    const minTable = rules.minimumTax || {};
+    const above = taxable > threshold;
+    const minimumTax = above ? pos(minTable[p.area] != null ? minTable[p.area] : minTable.dhakaCtg) : 0;
+    const netTax = Math.round(above ? Math.max(grossTax - rebate, minimumTax) : 0);
+
+    const afterExcess = Math.max(0, netTax - pos(p.excessAdj));
+    const afterCar = Math.max(0, afterExcess - pos(p.carTax));
+    const tdsMonth = num(p.tdsMonth); // last month already deducted, -1 = none
+    const tds = tdsMonth >= 0 ? pos(p.tdsAmount) : 0;
+    const remaining = Math.max(0, afterCar - tds);
+    const startMonth = Math.min(11, tdsMonth + 1);
+    const monthsLeft = 12 - startMonth;
+    const monthlyTax = Math.round(remaining / monthsLeft);
+
+    return {
+      yearlyGross, basic, houseRent, conveyance, medical, employerPF, incentive, thirteenth, overtime,
+      totalIncome, exemptionShare, exemption, taxable, threshold, slabRows: slab.rows, grossTax,
+      rebateByIncome, rebateByInvest, rebateCap, investment, investNeeded, rebate,
+      minimumTax, netTax, afterExcess, afterCar, tds, tdsMonth, remaining, startMonth, monthsLeft, monthlyTax
+    };
+  }
+
   /* ---------------- years ---------------- */
 
   /** Income year that contains a date (July to June). 2026 = 2026-27. */
@@ -251,7 +315,7 @@
     return years.reverse();
   }
 
-  const api = { compute, assess, thresholdFor, buildBands, taxOnBands, spread, buildYears, currentIncomeYear };
+  const api = { compute, assess, thresholdFor, buildBands, taxOnBands, spread, buildYears, currentIncomeYear, computeCOI };
   root.TaxEngine = api;
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
 })(typeof window !== 'undefined' ? window : globalThis);

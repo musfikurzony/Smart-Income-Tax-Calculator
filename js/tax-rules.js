@@ -56,7 +56,7 @@ window.TAX_RULE_SETS = [
       { width: null, rate: 30 }
     ],
     salaryExemption: { divisor: 3, cap: 500000 },
-    rebate: { incomePct: 3, investPct: 15, cap: 1000000 },
+    rebate: { incomePct: 3, investPct: 10, cap: 750000 },
     minimumTax: { dhakaCtg: 5000, otherCity: 5000, other: 5000 },
     investmentCaps: { dps: 120000 },
     verify: ['women', 'senior', 'disabled', 'thirdGender', 'freedomFighter', 'julyWarrior'],
@@ -65,12 +65,14 @@ window.TAX_RULE_SETS = [
         'সাধারণ করদাতার করমুক্ত আয়সীমা ৩,৭৫,০০০ থেকে বাড়িয়ে ৪,০০,০০০ টাকা করা হয়েছে (২০২৬-২৭ ও ২০২৭-২৮ অর্থবছর)।',
         'ঘোষিত পরিকল্পনা: ২০২৮-২৯ ও ২০২৯-৩০ অর্থবছরে ৪,৫০,০০০ এবং ২০৩০-৩১ অর্থবছরে ৫,০০,০০০ টাকা।',
         'নারী, প্রবীণ, প্রতিবন্ধী, তৃতীয় লিঙ্গ ও মুক্তিযোদ্ধাদের সীমা এখানে অর্থ অধ্যাদেশ ২০২৫ অনুযায়ী রাখা হয়েছে; অর্থ আইন ২০২৬-এর গেজেটে বাড়ানো হয়ে থাকলে ⚙️ সেটিংস থেকে বদলে নিন।',
+        'বিনিয়োগ কর রেয়াত কমানো হয়েছে: বিনিয়োগের ১৫% থেকে ১০%, আর সর্বোচ্চ সীমা ১০ লাখ থেকে ৭.৫ লাখ টাকা। ফলে একই রেয়াত পেতে আগের চেয়ে বেশি বিনিয়োগ লাগবে।',
         'কালো টাকা সাদা করার বিশেষ সুযোগ বাতিল করা হয়েছে।'
       ],
       en: [
         'The general tax-free limit rises from Tk 3,75,000 to Tk 4,00,000 (fiscal years 2026-27 and 2027-28).',
         'Announced plan: Tk 4,50,000 for 2028-29 and 2029-30, and Tk 5,00,000 for 2030-31.',
         'The limits for women, seniors, disabled, third-gender taxpayers and freedom fighters are kept at the Finance Ordinance 2025 figures. If the Finance Act 2026 gazette raised them, change them in ⚙️ Settings.',
+        'The investment rebate was cut from 15% to 10% of investment, and the ceiling from Tk 10 lakh to Tk 7.5 lakh, so the same rebate now needs more investment.',
         'The special scheme for whitening undisclosed money has been abolished.'
       ]
     }

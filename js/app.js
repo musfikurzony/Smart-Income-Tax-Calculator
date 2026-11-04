@@ -165,8 +165,11 @@
     buildForm();
     writeForm();
     renderHistory();
+    buildReportForm();
+    writeReportForm();
     recalc();
     if (!$('view-settings').hidden) renderSettings();
+    if (!$('view-report').hidden) renderReport();
     toast(t('tLang'));
   }
   $('langBtn').addEventListener('click', () => setLang(lang === 'bn' ? 'en' : 'bn'));
@@ -178,6 +181,7 @@
     store.set(KEY.view, name);
     if (name === 'guide') renderGuide();
     if (name === 'settings') renderSettings();
+    if (name === 'report') renderReport();
     window.scrollTo(0, 0);
   }
   document.querySelectorAll('.tab').forEach((b) => b.addEventListener('click', () => showView(b.dataset.view)));
@@ -268,6 +272,7 @@
     renderRebate(r, rules);
     renderMonths(r);
     if (!$('view-guide').hidden) renderGuide();
+    if (!$('view-report').hidden) renderReport();
   }
 
   function catLabel(key) { const c = CATS.find((x) => x.key === key); return c ? L(c.label) : key; }
@@ -537,6 +542,194 @@
       <div class="note warn">${t('gDisclaimer')}</div>`;
   }
 
+  /* ---------------- report (HR "Computation of Income") ---------------- */
+  const REPORT_DEFAULTS = {
+    year: 'current', category: 'general',
+    grossBefore: 100000, incrementMonth: -1, grossAfter: 100000,
+    thirteenth: 100000, incentive: 0, overtime: 0,
+    convMonthly: 2500, medicalPct: 5, hraPct: 50, employerPfPct: 5,
+    investMode: 'full', investment: 0,
+    excessAdj: 0, carTax: 0, tdsMonth: -1, tdsAmount: 0,
+    name: '', staffId: '', designation: '', department: '', joining: '', tin: ''
+  };
+  let rp = Object.assign({}, REPORT_DEFAULTS, store.get('sitc.report.v1', {}));
+  const RP_TEXT = ['name', 'staffId', 'designation', 'department', 'joining', 'tin', 'year', 'category', 'investMode'];
+  const saveRp = () => store.set('sitc.report.v1', rp);
+
+  function buildReportForm() {
+    fillSelect($('rp_year'), YEARS.map((y) => ({ v: y.id, l: yearLabel(y, true) })));
+    fillSelect($('rp_category'), CATS.map((c) => ({ v: c.key, l: L(c.label) })));
+    const monthOpts = months().map((m, i) => ({ v: i, l: m }));
+    fillSelect($('rp_incrementMonth'), [{ v: -1, l: t('noIncrement') }].concat(monthOpts.slice(1)));
+    fillSelect($('rp_tdsMonth'), [{ v: -1, l: t('rpTdsNone') }].concat(monthOpts.slice(0, 11)));
+  }
+  function writeReportForm() {
+    Object.keys(REPORT_DEFAULTS).forEach((k) => {
+      const el = $('rp_' + k);
+      if (!el) return;
+      el.value = k === 'year' ? resolveId(rp.year) : rp[k];
+    });
+    document.querySelectorAll('#rp_investSeg button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.val === rp.investMode)));
+    syncReportVisibility();
+  }
+  function syncReportVisibility() {
+    $('rp_grossAfterField').style.opacity = Number(rp.incrementMonth) < 0 ? '.45' : '1';
+    $('rp_grossAfter').disabled = Number(rp.incrementMonth) < 0;
+    $('rp_investmentField').hidden = rp.investMode !== 'actual';
+    $('rp_tdsAmountField').style.opacity = Number(rp.tdsMonth) < 0 ? '.45' : '1';
+    $('rp_tdsAmount').disabled = Number(rp.tdsMonth) < 0;
+    document.querySelectorAll('[data-rpwords]').forEach((h) => { h.textContent = words(rp[h.dataset.rpwords]); });
+  }
+  function bindReportForm() {
+    Object.keys(REPORT_DEFAULTS).forEach((k) => {
+      const el = $('rp_' + k);
+      if (!el) return;
+      const h = () => {
+        if (k === 'year') rp.year = el.value === CURRENT.id ? 'current' : el.value;
+        else rp[k] = RP_TEXT.includes(k) ? el.value : el.value === '' ? 0 : Number(el.value);
+        saveRp();
+        syncReportVisibility();
+        clearTimeout(rpTimer);
+        rpTimer = setTimeout(renderReport, 120);
+      };
+      el.addEventListener('input', h);
+      el.addEventListener('change', h);
+    });
+    document.querySelectorAll('#rp_investSeg button').forEach((b) => b.addEventListener('click', () => {
+      rp.investMode = b.dataset.val;
+      if (rp.investMode === 'actual' && !rp.investment && lastCoi) rp.investment = Math.round(lastCoi.investNeeded);
+      saveRp(); writeReportForm(); renderReport();
+    }));
+    $('rpPrint').addEventListener('click', () => window.print());
+    $('rpCopy').addEventListener('click', () => {
+      Object.assign(rp, {
+        year: inputs.presetId, category: inputs.category,
+        grossBefore: inputs.grossBefore, incrementMonth: inputs.incrementMonth, grossAfter: inputs.grossAfter,
+        thirteenth: inputs.festivalBonus, incentive: inputs.otherBonus, employerPfPct: inputs.employerPfPct,
+        tdsAmount: inputs.taxPaid
+      });
+      saveRp(); writeReportForm(); renderReport();
+      toast(t('tCopied'));
+    });
+  }
+  let rpTimer;
+  let lastCoi = null;
+
+  function renderReport() {
+    const rules = rulesFor(resolveId(rp.year));
+    const y = rules.startYear;
+    const c = E.computeCOI(Object.assign({}, rp, { area: inputs.area, disabledChildren: 0 }), rules);
+    lastCoi = c;
+    const sf = (n) => (lang === 'en' ? Math.round(n).toLocaleString('en-US') : fmt(n));
+    const N = (v) => (Math.abs(v) >= 0.5 ? sf(v) : '-');
+    const P = (v) => pct(v, 0);
+    const monthLabel = (i) => {
+      const yr = i <= 5 ? y : y + 1;
+      return lang === 'en' ? `${window.MONTHS.en[i].slice(0, 3)}/${yr}` : `${months()[i]}/${dg(yr)}`;
+    };
+    const ayFull = (s) => dg(`${s + 1}-${s + 2}`);
+    const ex = rules.salaryExemption, rb = rules.rebate;
+    // 6 columns: label | Tk. | amount | rate | middle | right
+    const row = (label, opts = {}) => `<tr class="${opts.cls || ''}">
+      <td class="lbl">${label}</td><td>${opts.tk || ''}</td><td class="n ${opts.ac || ''}">${opts.amt != null ? opts.amt : ''}</td>
+      <td>${opts.rate || ''}</td><td class="n ${opts.mc || ''}">${opts.mid != null ? opts.mid : ''}</td><td class="n ${opts.rc || ''}">${opts.right != null ? opts.right : ''}</td></tr>`;
+    const gap = '<tr class="gap"><td colspan="6"></td></tr>';
+
+    const slabRows = c.slabRows.map((b, i, arr) => {
+      const last = b.width == null;
+      const label = b.isFree ? t('shOn1st') : last ? t('shOnBalance') : t('shOnNext');
+      const amount = b.isFree ? Math.min(b.taxed || b.width, b.width) : b.taxed;
+      return row(label, {
+        tk: 'Tk.', amt: N(amount), ac: i === arr.length - 1 ? 'ul' : '',
+        rate: b.isFree ? '' : '@ ' + P(b.rate),
+        mid: b.isFree ? t('shNil') : N(b.tax), mc: i === arr.length - 1 ? 'ul' : ''
+      });
+    }).join('');
+
+    const rebateBox = `<tr><td colspan="4" style="padding:4px 0">
+      <table class="coi" style="width:auto;min-width:420px">
+        <tr><td class="lbl box" style="border-bottom:0!important;border-right:0!important">${t('shRbIncome', { p: P(rb.incomePct) })}</td><td style="border-top:1px solid #111">Tk.</td><td class="n" style="border-top:1px solid #111;border-right:1px solid #111">${N(c.rebateByIncome)}</td></tr>
+        <tr><td class="lbl" style="border-left:1px solid #111">${t('shRbInvest', { p: P(rb.investPct), amt: N(c.investment) })}</td><td>Tk.</td><td class="n" style="border-right:1px solid #111">${N(c.rebateByInvest)}</td></tr>
+        <tr><td class="lbl" style="border-left:1px solid #111;border-bottom:1px solid #111">&nbsp;&nbsp;${t('shRbCap', { amt: N(c.rebateCap) })}</td><td style="border-bottom:1px solid #111">Tk.</td><td class="n" style="border-right:1px solid #111;border-bottom:1px solid #111">${N(c.rebateCap)}</td></tr>
+        <tr><td class="lbl">${t('shLower')}</td><td>Tk.</td><td class="n">${N(c.rebate)}</td></tr>
+      </table></td><td></td><td></td></tr>`;
+
+    let running = c.netTax;
+    const adjRows = [];
+    adjRows.push(row(t('shExcess', { ay: dg(`${y}-${String((y + 1) % 100).padStart(2, '0')}`) }), { mid: c.afterExcess !== c.netTax ? N(c.netTax - c.afterExcess) : '', mc: 'ul' }));
+    adjRows.push(row('', { mid: N(c.afterExcess) }));
+    adjRows.push(row(t('shCar'), { mid: c.afterCar !== c.afterExcess ? N(c.afterExcess - c.afterCar) : '', mc: 'ul' }));
+    adjRows.push(row('', { mid: N(c.afterCar) }));
+    adjRows.push(row(t('shTds', { m: c.tdsMonth >= 0 ? monthLabel(c.tdsMonth) : '' }), { mid: N(c.tds), mc: 'ul' }));
+    running = c.remaining;
+
+    const personal = [['shStaffId', rp.staffId], ['shDesignation', rp.designation], ['shDepartment', rp.department], ['shJoining', rp.joining], ['shTin', rp.tin]];
+    const notes = [
+      t('shNote1', { source: esc(sourceText(rules)) }),
+      rp.investMode === 'actual' ? t('shNote2Actual', { amt: N(c.investment) }) : t('shNote2Full', { amt: N(c.investNeeded) }),
+      t('shNote3', { a: dg(y), b: dg(y + 1) })
+    ];
+    if (rules.kind === 'estimated' && !rules.isCustom) notes.push(t('shNoteEst'));
+
+    $('coiSheet').innerHTML = `
+      <div class="ttl"><div>${esc(rp.name || '')}</div><div>${t('shTitle')}</div><div>${t('shPeriod', { a: dg(y), b: dg(y + 1) })}</div></div>
+      <div class="meta">
+        <table>${personal.map(([k, v]) => `<tr><td>${t(k)}</td><td>${esc(v || '')}</td></tr>`).join('')}</table>
+        <div class="ay">${t('shAY', { ay: ayFull(y) })}</div>
+      </div>
+      <table class="coi">
+        <colgroup><col style="width:44%"><col style="width:4%"><col style="width:14%"><col style="width:8%"><col style="width:15%"><col style="width:15%"></colgroup>
+        <tr class="hd"><td colspan="4"></td><td>${t('shTaka')}</td><td>${t('shTaka')}</td></tr>
+        ${row(t('shBasic'), { right: N(c.basic) })}
+        ${row(t('shHra'), { right: N(c.houseRent) })}
+        ${row(t('shConv'), { right: N(c.conveyance) })}
+        ${row(t('shMedical'), { right: N(c.medical) })}
+        ${row(t('shIncentive'), { right: N(c.incentive) })}
+        ${row(t('shThirteenth'), { right: N(c.thirteenth) })}
+        ${row(t('shOvertime'), { right: N(c.overtime) })}
+        ${row(t('shEmployerPf'), { right: N(c.employerPF) })}
+        ${gap}
+        ${row(t('shTotalIncome'), { cls: 'b', right: N(c.totalIncome), rc: 'ol' })}
+        ${row(t('shExemption', { d: dg(ex.divisor), cap: N(ex.cap) }), { mid: `<span class="box" style="display:inline-block;padding:1px 6px;text-align:right">${N(c.exemptionShare)}<br>${N(ex.cap)}</span>`, right: N(c.exemption) })}
+        ${gap}
+        ${row(t('shTaxable'), { cls: 'b', right: N(c.taxable), rc: 'dul' })}
+        ${gap}
+        <tr><td class="sect" colspan="6">${t('shTaxCalc')}</td></tr>
+        ${slabRows}
+        ${row(t('shGrossTax'), { cls: 'b', amt: N(c.taxable), mid: N(c.grossTax) })}
+        ${gap}
+        <tr><td class="lbl" colspan="6">&nbsp;${t('shInvAllow')}</td></tr>
+        ${rebateBox}
+        ${gap}
+        ${row(t('shGrossTax'), { cls: 'b', mid: N(c.grossTax) })}
+        ${row(t('shTaxCredit'), { mid: N(c.rebate), mc: 'ul' })}
+        ${c.netTax > Math.round(c.grossTax - c.rebate) ? row(t('shMinTax'), { mid: N(c.minimumTax) }) : ''}
+        ${row(t('shNetTax'), { mid: N(c.netTax), mc: 'ul' })}
+        ${gap}
+        ${row(t('shNetTax'), { cls: 'b', mid: N(c.netTax) })}
+        ${adjRows.join('')}
+        ${row(t('shRemaining'), { cls: 'b', mid: N(running), mc: 'dul' })}
+        ${gap}
+        <tr class="b"><td class="lbl">${t('shMonthly')}</td><td colspan="3">${t('shFrom', { m: monthLabel(c.startMonth) })}</td><td class="n red">${N(c.monthlyTax)}</td><td></td></tr>
+        ${gap}
+        <tr><td class="lbl" colspan="5" style="text-decoration:underline">${t('shBreakup')}</td><td class="n box" style="font-weight:700;text-align:center">${t('shYearly')}</td></tr>
+        ${gap}
+        ${row(t('shBasic'), { right: N(c.basic) })}
+        ${row(t('shHra'), { right: N(c.houseRent) })}
+        ${row(t('shConv'), { right: N(c.conveyance) })}
+        ${row(t('shMedical'), { right: N(c.medical), rc: 'ul' })}
+        ${row('', { cls: 'b', right: N(c.yearlyGross) })}
+        ${gap}
+        ${row(t('shEmployerPf'), { right: N(c.employerPF) })}
+        ${row(t('shThirteenth'), { right: N(c.thirteenth) })}
+        ${c.incentive ? row(t('shIncentive'), { right: N(c.incentive) }) : ''}
+        ${c.overtime ? row(t('shOvertime'), { right: N(c.overtime) }) : ''}
+        ${gap}
+        ${row(t('shTotal'), { cls: 'b', right: N(c.totalIncome), rc: 'ol dul' })}
+      </table>
+      <div class="notes"><strong>${t('shNotes')}</strong><ol>${notes.map((n) => `<li>${n}</li>`).join('')}</ol></div>`;
+  }
+
   /* ---------------- settings ---------------- */
   let editId = null;
   let draft = null;
@@ -690,6 +883,7 @@
     inputs.presetId = editId === CURRENT.id ? 'current' : editId;
     store.set(KEY.inputs, inputs);
     buildForm(); writeForm();
+    buildReportForm(); writeReportForm();
     recalc();
     drawSettings();
     toast(t('tRulesSaved'));
@@ -768,7 +962,7 @@
     download('income-tax-sheet.csv', '﻿' + lines.map((l) => l.join(',')).join('\n'), 'text/csv;charset=utf-8');
   });
   $('printBtn').addEventListener('click', () => {
-    if ($('view-calc').hidden && $('view-guide').hidden) showView('calc');
+    if (!$('view-settings').hidden) showView('calc');
     window.print();
   });
 
@@ -777,6 +971,9 @@
   buildForm();
   writeForm();
   bindForm();
+  buildReportForm();
+  writeReportForm();
+  bindReportForm();
   renderHistory();
   recalc();
   const savedView = store.get(KEY.view, 'calc');
