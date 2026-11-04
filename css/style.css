@@ -27,10 +27,6 @@
   --band-4: #f97316;
   --band-5: #ef4444;
   --band-6: #b91c1c;
-  --chart-net: #0a6e4f;
-  --chart-tax: #c8102e;
-  --chart-pf: #1f5fbf;
-  --chart-bonus: #eab308;
   color-scheme: light;
 }
 
@@ -53,10 +49,7 @@
     --blue-soft: #15264a;
     --shadow: 0 1px 2px rgba(0, 0, 0, .3), 0 6px 20px rgba(0, 0, 0, .25);
     --band-0: #3b4a63;
-    --chart-net: #34c38f;
-    --chart-tax: #ff6b7f;
-    --chart-pf: #79a8ff;
-    color-scheme: dark;
+          color-scheme: dark;
   }
 }
 :root[data-theme="dark"] {
@@ -77,9 +70,6 @@
   --blue-soft: #15264a;
   --shadow: 0 1px 2px rgba(0, 0, 0, .3), 0 6px 20px rgba(0, 0, 0, .25);
   --band-0: #3b4a63;
-  --chart-net: #34c38f;
-  --chart-tax: #ff6b7f;
-  --chart-pf: #79a8ff;
   color-scheme: dark;
 }
 
@@ -228,11 +218,6 @@ tfoot td { font-weight: 700; background: var(--surface-2); border-top: 2px solid
 tr.inactive td { color: var(--muted); }
 tr.active-band td:first-child { box-shadow: inset 3px 0 0 var(--accent); }
 .rate-pill { display: inline-block; min-width: 46px; text-align: center; padding: 1px 8px; border-radius: 999px; font-weight: 700; font-size: 12.5px; color: #111; }
-
-/* ---------- Chart ---------- */
-.chart { width: 100%; height: auto; display: block; margin-top: 8px; }
-.chart text { fill: var(--muted); font-size: 11px; font-family: inherit; }
-.chart .grid-line { stroke: var(--line); }
 
 /* ---------- Guide ---------- */
 .guide { max-width: 980px; margin: 0 auto; }

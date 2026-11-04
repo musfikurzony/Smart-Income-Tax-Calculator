@@ -195,7 +195,63 @@
     return r;
   }
 
-  const api = { compute, assess, thresholdFor, buildBands, taxOnBands, spread };
+  /* ---------------- years ---------------- */
+
+  /** Income year that contains a date (July to June). 2026 = 2026-27. */
+  function currentIncomeYear(d) {
+    return d.getMonth() >= 6 ? d.getFullYear() : d.getFullYear() - 1;
+  }
+
+  /** Announced general limit for year y (latest entry at or before y). */
+  function announcedFor(announced, y) {
+    let best = null;
+    Object.keys(announced || {}).map(Number).sort((a, b) => a - b).forEach((k) => {
+      if (k <= y) best = announced[k];
+    });
+    return best;
+  }
+
+  /**
+   * Builds the full year list, newest first. Years without their own rule
+   * set copy the closest earlier one and are marked kind: 'estimated'.
+   */
+  function buildYears(sets, announced, range, today) {
+    const clone = (o) => JSON.parse(JSON.stringify(o));
+    const sorted = sets.slice().sort((a, b) => a.startYear - b.startYear);
+    const cur = currentIncomeYear(today || new Date());
+    const annKeys = Object.keys(announced || {}).map(Number);
+    const first = Math.min(range && range.first != null ? range.first : sorted[0].startYear, sorted[0].startYear);
+    const last = Math.max(cur + (range && range.ahead != null ? range.ahead : 5), sorted[sorted.length - 1].startYear, ...annKeys);
+    const years = [];
+    for (let y = first; y <= last; y++) {
+      const exact = sorted.find((s) => s.startYear === y);
+      let r;
+      if (exact) {
+        r = clone(exact);
+        r.kind = 'official';
+      } else {
+        const base = sorted.slice().reverse().find((s) => s.startYear < y) || sorted[0];
+        r = clone(base);
+        r.startYear = y;
+        r.kind = 'estimated';
+        r.basedOn = base.startYear;
+        r.notes = { bn: [], en: [] };
+        r.verify = Object.keys(r.thresholds);
+        const ann = y > base.startYear ? announcedFor(announced, y) : null;
+        if (ann != null) {
+          const delta = ann - r.thresholds.general;
+          Object.keys(r.thresholds).forEach((k) => { r.thresholds[k] += delta; });
+          r.announcedGeneral = ann;
+        }
+      }
+      r.id = 'iy-' + y;
+      r.current = y === cur;
+      years.push(r);
+    }
+    return years.reverse();
+  }
+
+  const api = { compute, assess, thresholdFor, buildBands, taxOnBands, spread, buildYears, currentIncomeYear };
   root.TaxEngine = api;
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
 })(typeof window !== 'undefined' ? window : globalThis);

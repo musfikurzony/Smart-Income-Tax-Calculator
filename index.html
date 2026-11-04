@@ -4,7 +4,7 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <title>স্মার্ট আয়কর ক্যালকুলেটর — বাংলাদেশ</title>
-<meta name="description" content="বাংলাদেশের ব্যক্তি করদাতাদের জন্য আয়কর ক্যালকুলেটর: সর্বশেষ করমুক্ত আয়সীমা, স্ল্যাব-ভিত্তিক কর, বিনিয়োগ রেয়াত, মাসিক কর্তন ও সম্পূর্ণ নিয়ম-গাইড।" />
+<meta name="description" content="বাংলাদেশের ব্যক্তি করদাতাদের জন্য আয়কর ক্যালকুলেটর: সর্বশেষ করমুক্ত আয়সীমা, স্ল্যাব-ভিত্তিক কর, বিনিয়োগ রেয়াত, মাসিক কর্তন ও সম্পূর্ণ নিয়ম-গাইড। Bangladesh income tax calculator in Bangla and English." />
 <meta name="theme-color" content="#0a6e4f" />
 <link rel="manifest" href="manifest.json" />
 <link rel="icon" href="icons/icon.svg" type="image/svg+xml" />
@@ -22,18 +22,19 @@
     <div class="brand">
       <div class="brand-mark" aria-hidden="true"><span></span></div>
       <div>
-        <h1>স্মার্ট আয়কর ক্যালকুলেটর</h1>
-        <p id="brandSub">বাংলাদেশ · ব্যক্তি করদাতা</p>
+        <h1 data-i18n="appTitle">স্মার্ট আয়কর ক্যালকুলেটর</h1>
+        <p id="brandSub"></p>
       </div>
     </div>
-    <nav class="tabs" role="tablist" aria-label="বিভাগ">
-      <button class="tab" role="tab" data-view="calc" aria-selected="true">🧮 ক্যালকুলেটর</button>
-      <button class="tab" role="tab" data-view="guide" aria-selected="false">📘 নিয়ম ও স্ল্যাব</button>
-      <button class="tab" role="tab" data-view="settings" aria-selected="false">⚙️ সেটিংস</button>
+    <nav class="tabs" role="tablist">
+      <button class="tab" role="tab" data-view="calc" aria-selected="true" data-i18n="tabCalc"></button>
+      <button class="tab" role="tab" data-view="guide" aria-selected="false" data-i18n="tabGuide"></button>
+      <button class="tab" role="tab" data-view="settings" aria-selected="false" data-i18n="tabSettings"></button>
     </nav>
     <div class="tools">
-      <button class="btn ghost icon-btn" id="themeBtn" type="button" title="থিম বদলান" aria-label="থিম বদলান">🌓</button>
-      <button class="btn ghost" id="printBtn" type="button" title="প্রিন্ট / PDF">🖨️ <span class="hide-sm">PDF</span></button>
+      <button class="btn ghost" id="langBtn" type="button" data-i18n="langSwitch"></button>
+      <button class="btn ghost icon-btn" id="themeBtn" type="button">🌓</button>
+      <button class="btn ghost icon-btn" id="printBtn" type="button" data-i18n-title="printBtn">🖨️</button>
     </div>
   </div>
 </header>
@@ -45,125 +46,125 @@
       <div class="inputs-col">
 
         <div class="card">
-          <h2><span class="step">১</span> বছর ও করদাতার ধরন</h2>
+          <h2><span class="step" data-num="1"></span> <span data-i18n="s1"></span></h2>
           <div class="field">
-            <label for="presetId">আয়বর্ষ / নিয়মের সেট</label>
+            <label for="presetId" data-i18n="yearField"></label>
             <select id="presetId"></select>
             <div class="hint" id="presetHint"></div>
           </div>
           <div class="field">
-            <label for="category">করদাতার শ্রেণি</label>
+            <label for="category" data-i18n="categoryField"></label>
             <select id="category"></select>
             <div class="hint" id="categoryHint"></div>
           </div>
           <div class="row2">
             <div class="field">
-              <label for="area">বসবাসের এলাকা</label>
+              <label for="area" data-i18n="areaField"></label>
               <select id="area"></select>
             </div>
             <div class="field">
-              <label for="disabledChildren">প্রতিবন্ধী সন্তান</label>
+              <label for="disabledChildren" data-i18n="childField"></label>
               <input id="disabledChildren" type="number" min="0" step="1" inputmode="numeric" />
-              <div class="hint">প্রতি সন্তানে অতিরিক্ত ছাড়</div>
+              <div class="hint" data-i18n="childHint"></div>
             </div>
           </div>
         </div>
 
         <div class="card">
-          <h2><span class="step">২</span> বেতন ও বোনাস</h2>
+          <h2><span class="step" data-num="2"></span> <span data-i18n="s2"></span></h2>
           <div class="field">
-            <label for="grossBefore">মাসিক মোট বেতন (Gross)</label>
+            <label for="grossBefore" data-i18n="grossBefore"></label>
             <div class="money"><input id="grossBefore" type="number" min="0" step="100" inputmode="decimal" /></div>
             <div class="hint" data-words="grossBefore"></div>
           </div>
           <div class="row2">
             <div class="field">
-              <label for="incrementMonth">ইনক্রিমেন্ট শুরুর মাস</label>
+              <label for="incrementMonth" data-i18n="incrementMonth"></label>
               <select id="incrementMonth"></select>
             </div>
             <div class="field" id="grossAfterField">
-              <label for="grossAfter">ইনক্রিমেন্টের পর বেতন</label>
+              <label for="grossAfter" data-i18n="grossAfter"></label>
               <div class="money"><input id="grossAfter" type="number" min="0" step="100" inputmode="decimal" /></div>
               <div class="hint" data-words="grossAfter"></div>
             </div>
           </div>
           <div class="row2">
             <div class="field">
-              <label for="festivalBonus">উৎসব ভাতা / ১৩তম মাস (বছরে মোট)</label>
+              <label for="festivalBonus" data-i18n="festivalBonus"></label>
               <div class="money"><input id="festivalBonus" type="number" min="0" step="100" inputmode="decimal" /></div>
             </div>
             <div class="field">
-              <label for="festivalBonusMonth">যে মাসে পাবেন</label>
+              <label for="festivalBonusMonth" data-i18n="whichMonth"></label>
               <select id="festivalBonusMonth"></select>
             </div>
           </div>
           <div class="row2">
             <div class="field">
-              <label for="otherBonus">পারফরম্যান্স / অন্যান্য বোনাস</label>
+              <label for="otherBonus" data-i18n="otherBonus"></label>
               <div class="money"><input id="otherBonus" type="number" min="0" step="100" inputmode="decimal" /></div>
             </div>
             <div class="field">
-              <label for="otherBonusMonth">যে মাসে পাবেন</label>
+              <label for="otherBonusMonth" data-i18n="whichMonth"></label>
               <select id="otherBonusMonth"></select>
             </div>
           </div>
         </div>
 
         <div class="card">
-          <h2><span class="step">৩</span> প্রভিডেন্ট ফান্ড (PF)</h2>
+          <h2><span class="step" data-num="3"></span> <span data-i18n="s3"></span></h2>
           <div class="field">
-            <span class="label">PF কিসের উপর কাটে?</span>
-            <div class="seg" id="pfBaseSeg" role="group" aria-label="PF ভিত্তি">
-              <button type="button" data-val="gross">মোট বেতন</button>
-              <button type="button" data-val="basic">বেসিক বেতন</button>
+            <span class="label" data-i18n="pfBaseQ"></span>
+            <div class="seg" id="pfBaseSeg" role="group">
+              <button type="button" data-val="gross" data-i18n="pfGross"></button>
+              <button type="button" data-val="basic" data-i18n="pfBasic"></button>
             </div>
           </div>
           <div class="field" id="basicPctField">
-            <label for="basicPct">বেসিক = মোট বেতনের কত %</label>
+            <label for="basicPct" data-i18n="basicPct"></label>
             <input id="basicPct" type="number" min="0" max="100" step="1" />
           </div>
           <div class="row2">
             <div class="field">
-              <label for="employeePfPct">আপনার অংশ (%)</label>
+              <label for="employeePfPct" data-i18n="employeePf"></label>
               <input id="employeePfPct" type="number" min="0" max="100" step="0.5" />
             </div>
             <div class="field">
-              <label for="employerPfPct">নিয়োগকর্তার অংশ (%)</label>
+              <label for="employerPfPct" data-i18n="employerPf"></label>
               <input id="employerPfPct" type="number" min="0" max="100" step="0.5" />
             </div>
           </div>
-          <label class="check"><input type="checkbox" id="pfCountsAsInvestment" /> <span>স্বীকৃত PF — দুই অংশই বিনিয়োগ হিসেবে গণনা হবে <span class="sub">(নিয়োগকর্তার অংশ আয়েও যোগ হয়)</span></span></label>
+          <label class="check"><input type="checkbox" id="pfCountsAsInvestment" /> <span><span data-i18n="pfInvest"></span> <span class="sub" data-i18n="pfInvestSub"></span></span></label>
         </div>
 
         <div class="card">
-          <h2><span class="step">৪</span> বিনিয়োগ (কর রেয়াতের জন্য)</h2>
-          <p class="sub" style="margin:-6px 0 12px">এই আয়বর্ষে (জুলাই–জুন) যা বিনিয়োগ/জমা করেছেন বা করবেন</p>
+          <h2><span class="step" data-num="4"></span> <span data-i18n="s4"></span></h2>
+          <p class="sub" style="margin:-6px 0 12px" data-i18n="s4sub"></p>
           <div id="investFields"></div>
         </div>
 
         <div class="card">
-          <h2><span class="step">৫</span> অন্যান্য আয় ও পরিশোধিত কর</h2>
+          <h2><span class="step" data-num="5"></span> <span data-i18n="s5"></span></h2>
           <div class="field">
-            <label for="otherIncome">অন্যান্য করযোগ্য আয় (বছরে, নিট)</label>
+            <label for="otherIncome" data-i18n="otherIncome"></label>
             <div class="money"><input id="otherIncome" type="number" min="0" step="100" inputmode="decimal" /></div>
-            <div class="hint">বাড়িভাড়া, ব্যবসা, ফ্রিল্যান্সিং ইত্যাদি — খরচ বাদ দিয়ে নিট আয়</div>
+            <div class="hint" data-i18n="otherIncomeHint"></div>
           </div>
           <div class="field">
-            <label for="taxPaid">ইতিমধ্যে কর্তিত / অগ্রিম কর (TDS/AIT)</label>
+            <label for="taxPaid" data-i18n="taxPaid"></label>
             <div class="money"><input id="taxPaid" type="number" min="0" step="100" inputmode="decimal" /></div>
-            <div class="hint">রিটার্নের সময় বাকি কত দিতে হবে তা দেখাতে</div>
+            <div class="hint" data-i18n="taxPaidHint"></div>
           </div>
         </div>
 
         <div class="card no-print">
           <div class="card-head">
-            <h2>💾 সংরক্ষিত হিসাব</h2>
-            <button class="btn sm" id="saveScenario" type="button">এই হিসাব সেভ করুন</button>
+            <h2 data-i18n="saved"></h2>
+            <button class="btn sm" id="saveScenario" type="button" data-i18n="saveScenario"></button>
           </div>
-          <div id="historyList" class="sub">এখনো কিছু সেভ করা হয়নি।</div>
+          <div id="historyList" class="sub"></div>
           <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
-            <button class="btn ghost sm" id="resetInputs" type="button">ইনপুট রিসেট</button>
-            <button class="btn danger sm" id="clearHistory" type="button">সব মুছুন</button>
+            <button class="btn ghost sm" id="resetInputs" type="button" data-i18n="resetInputs"></button>
+            <button class="btn danger sm" id="clearHistory" type="button" data-i18n="clearHistory"></button>
           </div>
         </div>
       </div>
@@ -173,7 +174,7 @@
 
         <div class="card">
           <div class="card-head">
-            <h2>🧾 কর হিসাবের ধাপ</h2>
+            <h2 data-i18n="flowTitle"></h2>
             <span class="badge green" id="ruleBadge"></span>
           </div>
           <ul class="flow" id="flow"></ul>
@@ -183,15 +184,15 @@
         <div class="card">
           <div class="card-head">
             <div>
-              <h2>📊 স্ল্যাব অনুযায়ী কর</h2>
-              <p class="sub">আপনার করযোগ্য আয় কোন ধাপে কত টাকা, আর প্রতিটি ধাপে কত কর</p>
+              <h2 data-i18n="slabTitle"></h2>
+              <p class="sub" data-i18n="slabSub"></p>
             </div>
           </div>
           <div class="bandbar" id="bandbar"></div>
           <div class="legend" id="bandLegend"></div>
           <div class="table-wrap" style="margin-top:12px">
             <table id="slabTable">
-              <thead><tr><th>ধাপ (করযোগ্য আয়)</th><th class="r">হার</th><th class="r">এই ধাপে আয়</th><th class="r">কর</th></tr></thead>
+              <thead><tr><th data-i18n="thBand"></th><th class="r" data-i18n="thRate"></th><th class="r" data-i18n="thInBand"></th><th class="r" data-i18n="thTax"></th></tr></thead>
               <tbody></tbody>
               <tfoot></tfoot>
             </table>
@@ -199,27 +200,25 @@
         </div>
 
         <div class="card">
-          <h2>💡 বিনিয়োগ রেয়াত ও পরিকল্পনা</h2>
+          <h2 data-i18n="rebateTitle"></h2>
           <div id="rebateBox"></div>
         </div>
 
         <div class="card">
           <div class="card-head">
             <div>
-              <h2>📅 মাসিক কর্তন — জুলাই থেকে জুন</h2>
-              <p class="sub">নিয়োগকর্তা প্রতি মাসে আনুমানিক কত কর কাটবেন</p>
+              <h2 data-i18n="monthTitle"></h2>
+              <p class="sub" data-i18n="monthSub"></p>
             </div>
             <button class="btn ghost sm no-print" id="exportCsv" type="button">⬇️ CSV</button>
           </div>
           <div class="table-wrap">
             <table id="monthTable">
-              <thead><tr><th>মাস</th><th class="r">বেতন</th><th class="r">বোনাস</th><th class="r">PF (আপনার)</th><th class="r">PF (নিয়োগকর্তা)</th><th class="r">কর</th><th class="r">হাতে পাবেন</th></tr></thead>
+              <thead><tr><th data-i18n="thMonth"></th><th class="r" data-i18n="thSalary"></th><th class="r" data-i18n="thBonus"></th><th class="r" data-i18n="thPfYou"></th><th class="r" data-i18n="thPfEmp"></th><th class="r" data-i18n="thTax"></th><th class="r" data-i18n="thNet"></th></tr></thead>
               <tbody></tbody>
               <tfoot></tfoot>
             </table>
           </div>
-          <svg class="chart" id="chart" viewBox="0 0 760 260" role="img" aria-label="মাসিক বেতন বণ্টনের চার্ট"></svg>
-          <div class="legend" id="chartLegend"></div>
         </div>
       </div>
     </div>
@@ -237,10 +236,11 @@
 </main>
 
 <footer>
-  <p>⚠️ এটি একটি আনুমানিক হিসাব। চূড়ান্ত রিটার্ন জমার আগে জাতীয় রাজস্ব বোর্ডের (NBR) সর্বশেষ প্রজ্ঞাপন বা একজন কর আইনজীবী/আয়কর পেশাজীবীর সঙ্গে মিলিয়ে নিন।</p>
-  <p>নির্মাতা: মুসফিকুর রহমান · <span id="year"></span> · অফলাইনেও চলে (PWA)</p>
+  <p data-i18n="footer1"></p>
+  <p id="footer2"></p>
 </footer>
 
+<script src="js/i18n.js"></script>
 <script src="js/tax-rules.js"></script>
 <script src="js/engine.js"></script>
 <script src="js/app.js"></script>
