@@ -610,7 +610,7 @@ window.I18N = {
     shNoteEst: 'The budget for this year has not been passed yet; this is an estimate.',
 
     footer1: '⚠️ This is an estimate. Before filing your return, check against the latest NBR notices or with a tax lawyer or income tax practitioner.',
-    footer2: 'Made by Musfikur Rahman · {y} · Works offline (PWA)',
+    footer2: 'Developed by Musfikur Rahman | Copyright © 2026',
 
     wCrore: 'crore', wLakh: 'lakh', wThousand: 'thousand', wTaka: 'taka'
   }
